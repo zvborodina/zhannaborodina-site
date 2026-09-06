@@ -279,16 +279,15 @@ section:first-of-type { border-top: 0; }
   align-items: start;
 }
 .about-photo {
+  display: block;
   width: 100%;
-  aspect-ratio: 1 / 1;
-  object-fit: cover;
-  object-position: center 20%;
+  height: auto;
   border-radius: var(--radius);
   border: 1px solid var(--line);
 }
 @media (max-width: 760px) {
-  .about-layout { grid-template-columns: 1fr; }
-  .about-photo { max-width: 320px; }
+  .about-layout { grid-template-columns: 1fr; gap: 20px; }
+  .about-photo { width: 200px; max-width: 55%; }
 }
 
 .card h3 { margin-bottom: 8px; }
