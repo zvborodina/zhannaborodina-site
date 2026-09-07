@@ -109,6 +109,7 @@ ul { margin: 0; padding: 0; list-style: none; }
 }
 
 .lede { font-size: clamp(17px, 2vw, 20px); color: var(--muted); max-width: 60ch; }
+.muted { color: var(--muted); }
 
 /* --- Кнопки --------------------------------------------------------------- */
 
@@ -335,6 +336,11 @@ section:first-of-type { border-top: 0; }
   font-size: 14.5px;
   color: var(--plum);
   background: var(--surface);
+}
+.on-plum .caps li {
+  color: var(--plum-ink);
+  background: color-mix(in srgb, var(--plum-ink) 7%, transparent);
+  border-color: var(--plum-line);
 }
 
 /* --- Прайс -------------------------------------------------------------- */
