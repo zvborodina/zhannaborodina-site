@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Калькулятор вклада в партнёрство — Жанна Бородина</title>
+  <meta name="description" content="Бесплатный инструмент по методике «9 капиталов»: оцените вклад в партнёрство — с бизнес-партнёром, супругом(ой) в бизнесе или партнёром в жизни — и увидьте, где расходятся оценки." />
+  <link rel="canonical" href="https://zhannaborodina.com/kalkulyator-partnerstva.html" />
+  <meta name="robots" content="index, follow" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="ru_RU" />
+  <meta property="og:url" content="https://zhannaborodina.com/kalkulyator-partnerstva.html" />
+  <meta property="og:title" content="Калькулятор вклада в партнёрство — 9 капиталов" />
+  <meta property="og:description" content="Оцените честно, кто что реально приносит в общее дело — и где расходятся ваши оценки." />
+  <meta property="og:image" content="https://zhannaborodina.com/assets/og.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="https://zhannaborodina.com/assets/og.png" />
+
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" />
+  <link rel="stylesheet" href="/assets/styles.css" />
+
+  <style>
+    .tool { padding: clamp(28px, 5vw, 44px) 0 clamp(56px, 9vw, 104px); }
+    .tool-narrow { max-width: 700px; }
+    .page-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; }
+    .page-head .emblem { width: 50px; flex: none; margin-top: 4px; }
+    .on-plum .page-head .emblem { color: var(--plum-line); }
+
+    .mode-tabs { display: flex; gap: 10px; flex-wrap: wrap; margin: 28px 0 0; }
+    .mode-tab {
+      flex: 1; min-width: 200px; text-align: center;
+      border: 1px solid var(--line); background: var(--surface); color: var(--muted);
+      border-radius: var(--radius); padding: 13px 18px; font: inherit; font-size: 14.5px; font-weight: 500;
+      cursor: pointer; transition: all .15s;
+    }
+    .mode-tab.active { background: var(--plum); color: #f4eee5; border-color: var(--plum); }
+
+    .tool-card {
+      background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+      padding: clamp(20px, 3vw, 30px); margin-top: 20px;
+    }
+    .tool-card h3 { font-size: 17px; margin: 0 0 12px; }
+
+    .type-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
+    .type-btn {
+      border: 1px solid var(--line); background: var(--bg); color: var(--muted);
+      border-radius: 999px; padding: 9px 16px; font: inherit; font-size: 13.5px; cursor: pointer; transition: all .15s;
+    }
+    .type-btn.active { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+
+    .names { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 16px; }
+    .field label { display: block; font-size: 12.5px; color: var(--muted); margin-bottom: 6px; }
+    .field input, .field textarea {
+      width: 100%; border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px;
+      font: inherit; font-size: 15px; color: var(--ink); background: var(--bg);
+    }
+    .field input:focus, .field textarea:focus { outline: none; border-color: var(--gold-emblem); }
+
+    .progress-wrap { display: flex; align-items: center; gap: 12px; margin: 22px 0 4px; }
+    .progress-track { flex: 1; height: 5px; border-radius: 3px; background: var(--line); overflow: hidden; }
+    .progress-fill { height: 100%; background: var(--gold-emblem); width: 0%; transition: width .2s; }
+    .progress-label { font-size: 12.5px; color: var(--muted); white-space: nowrap; }
+
+    .cap-card { border-top: 1px solid var(--line); padding: 24px 0; }
+    .cap-card:first-child { border-top: 0; }
+    .cap-head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 4px; }
+    .cap-num { font-family: var(--font-serif); font-size: 14px; color: var(--muted); }
+    .cap-card h3 { font-size: 17px; margin: 0; }
+    .cap-desc { color: var(--muted); font-size: 14px; margin: 6px 0 18px; max-width: 60ch; }
+
+    .slider-row { margin-bottom: 16px; }
+    .slider-top { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 7px; }
+    .slider-top .who { font-weight: 500; }
+    .slider-top .val { font-variant-numeric: tabular-nums; font-weight: 600; }
+    .who.mine { color: var(--gold-deep); }
+    .who.partner { color: var(--ink); }
+    input[type=range] { -webkit-appearance: none; width: 100%; height: 4px; border-radius: 2px; background: var(--line); outline: none; }
+    input[type=range].mine-slider { accent-color: var(--gold-deep); }
+    input[type=range].partner-slider { accent-color: var(--ink); }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 17px; height: 17px; border-radius: 50%; background: currentColor;
+      cursor: pointer; border: 2px solid var(--surface); box-shadow: 0 0 0 1px var(--line);
+    }
+
+    .split-row { display: flex; align-items: center; gap: 16px; margin: 18px 0 6px; }
+    .split-bar { flex: 1; height: 13px; border-radius: 7px; overflow: hidden; display: flex; background: color-mix(in srgb, var(--plum-ink) 14%, var(--plum-bg)); }
+    .split-mine { background: var(--plum-gold); height: 100%; }
+    .split-partner { background: var(--plum-ink); height: 100%; }
+    .split-labels { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 22px; }
+    .split-labels .m { color: var(--plum-gold); }
+    .split-labels .p { color: var(--plum-ink); }
+
+    .radar-wrap { display: flex; justify-content: center; margin: 8px 0 16px; }
+    .radar-pair { display: flex; gap: 24px; justify-content: center; margin: 8px 0 16px; flex-wrap: wrap; }
+    .radar-pair h3 { text-align: center; color: var(--plum-ink); font-size: 14px; margin-bottom: 6px; }
+    .legend { display: flex; gap: 20px; justify-content: center; font-size: 13px; margin-bottom: 22px; }
+    .legend span { display: flex; align-items: center; gap: 6px; }
+    .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+    .dot--mine { background: var(--plum-gold); }
+    .dot--partner { background: var(--plum-ink); }
+
+    .gaps h3 { color: var(--plum-ink); font-size: 16px; margin-bottom: 14px; }
+    .gap-item { background: color-mix(in srgb, var(--plum-ink) 10%, var(--plum-bg)); border-radius: 10px; padding: 14px 16px; margin-bottom: 10px; }
+    .gap-item .g-name { font-weight: 600; font-size: 14px; margin-bottom: 4px; color: var(--plum-gold); }
+    .gap-item .g-diff { font-size: 12px; color: color-mix(in srgb, var(--plum-ink) 70%, transparent); margin-bottom: 6px; }
+    .gap-item .g-text { font-size: 13px; color: var(--plum-ink); line-height: 1.55; }
+
+    .cta-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 18px; }
+    .cta-row input {
+      flex: 1; min-width: 180px; border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px;
+      font: inherit; font-size: 15px; background: var(--bg); color: var(--ink);
+    }
+
+    .code-box textarea { font-family: 'SF Mono', Consolas, monospace; font-size: 12px; resize: vertical; }
+    .btn-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 12px; }
+    .copy-flash { color: var(--gold-deep); font-size: 13px; margin-left: 2px; }
+    .warn-box { background: var(--bg); border: 1px solid var(--gold-emblem); color: var(--ink); border-radius: 10px; padding: 12px 14px; font-size: 13px; margin-top: 16px; }
+    .err-box { color: #9c4a3a; font-size: 13px; margin-top: 10px; }
+    .back-link { display: inline-block; margin-top: 8px; color: var(--muted); font-size: 13.5px; }
+
+    [hidden] { display: none !important; }
+    @media (max-width: 620px) { .names { grid-template-columns: 1fr; } .page-head .emblem { display: none; } }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Перейти к содержанию</a>
+  <header class="site-header">
+    <div class="container site-header__inner">
+      <a class="brand-link" href="/" aria-label="Жанна Бородина — на главную">
+        <svg class="emblem" viewBox="10 16 60 55" fill="none" aria-hidden="true">
+          <g stroke-width="1.6">
+            <circle cx="34" cy="40" r="20" opacity="0.7" />
+            <circle cx="52" cy="44" r="14" opacity="0.7" />
+            <circle cx="43" cy="58" r="9" opacity="0.5" />
+          </g>
+        </svg>
+        <b>Жанна Бородина</b>
+        <span>Деньги и опора</span>
+      </a>
+      <nav class="nav" aria-label="Навигация"><a href="/#capitals">9 капиталов</a></nav>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <section class="tool" aria-labelledby="tool-title">
+      <div class="container tool-narrow">
+        <div class="page-head">
+          <div>
+            <p class="kicker">9 капиталов · практический инструмент</p>
+            <h1 id="tool-title">Калькулятор вклада в партнёрство</h1>
+            <p class="lede">Не только деньги. Оцените честно, кто что реально приносит в общее дело — с бизнес-партнёром, супругом(ой) в бизнесе или партнёром в жизни.</p>
+          </div>
+          <svg class="emblem" viewBox="10 16 60 55" fill="none" aria-hidden="true">
+            <g stroke-width="1.6">
+              <circle cx="34" cy="40" r="20" opacity="0.7" />
+              <circle cx="52" cy="44" r="14" opacity="0.7" />
+              <circle cx="43" cy="58" r="9" opacity="0.5" />
+            </g>
+          </svg>
+        </div>
+
+        <div class="mode-tabs" id="modeTabs">
+          <button class="mode-tab active" data-mode="solo">Заполняю один(а) за двоих</button>
+          <button class="mode-tab" data-mode="dual">Мы заполняем по отдельности</button>
+        </div>
+      </div>
+    </section>
+
+    <div id="soloMode">
+      <section class="tool" style="padding-top:0">
+        <div class="container tool-narrow">
+          <div class="tool-card">
+            <h3>С кем вы оцениваете партнёрство?</h3>
+            <div class="type-row" id="typeRow">
+              <button class="type-btn active" data-type="Бизнес-партнёр">Бизнес-партнёр</button>
+              <button class="type-btn" data-type="Супруг(а) в бизнесе">Супруг(а) в бизнесе</button>
+              <button class="type-btn" data-type="Партнёр в жизни">Партнёр в жизни</button>
+            </div>
+            <div class="names">
+              <div class="field">
+                <label>Ваше имя</label>
+                <input type="text" id="nameMine" placeholder="Например, Жанна">
+              </div>
+              <div class="field">
+                <label id="partnerLabel">Имя партнёра</label>
+                <input type="text" id="namePartner" placeholder="Например, Алексей">
+              </div>
+            </div>
+            <div class="progress-wrap">
+              <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+              <div class="progress-label" id="progressLabel">Оценено 0 из 9</div>
+            </div>
+          </div>
+
+          <div id="capitalsHost" class="tool-card"></div>
+        </div>
+      </section>
+
+      <section class="tool on-plum">
+        <div class="container tool-narrow">
+          <p class="kicker">Результат</p>
+          <h2>Где вы сходитесь, а где — нет</h2>
+          <p class="lede" id="resultsSub">Общее распределение вклада и капиталы с самым большим расхождением в оценках — с них стоит начать разговор.</p>
+
+          <div class="split-labels">
+            <span class="m" id="splitMineLabel">Вы — 50%</span>
+            <span class="p" id="splitPartnerLabel">Партнёр — 50%</span>
+          </div>
+          <div class="split-row">
+            <div class="split-bar">
+              <div class="split-mine" id="splitMine" style="width:50%;"></div>
+              <div class="split-partner" id="splitPartner" style="width:50%;"></div>
+            </div>
+          </div>
+
+          <div class="legend">
+            <span><i class="dot dot--mine"></i>Вы</span>
+            <span><i class="dot dot--partner"></i>Партнёр</span>
+          </div>
+          <div class="radar-wrap">
+            <svg id="radar" width="480" height="480" viewBox="0 0 480 480"></svg>
+          </div>
+
+          <div class="gaps">
+            <h3>Где расхождение в оценках самое большое</h3>
+            <div id="gapsHost"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="tool">
+        <div class="container tool-narrow">
+          <p class="kicker">Следующий шаг</p>
+          <h2 id="ctaHeadline">Хотите обсудить результат вместе с партнёром?</h2>
+          <p class="lede" id="ctaSub">Оставьте контакт — вышлю разбор и приглашение на консультацию, где разберём именно ваши капиталы с наибольшим расхождением.</p>
+          <div class="cta-row">
+            <input type="text" id="ctaName" placeholder="Как к вам обращаться">
+            <input type="text" id="ctaContact" placeholder="Email или Telegram">
+            <button class="btn btn--primary" id="ctaBtn">Получить разбор</button>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div id="dualMode" hidden>
+      <section class="tool" style="padding-top:0">
+        <div class="container tool-narrow">
+          <p class="lede">Каждый участник открывает эту страницу у себя и заполняет свою анкету отдельно: свой вклад и вклад партнёра, как его видит он сам. В конце анкета превращается в короткий код — его нужно прислать организатору (например, по email). Организатор вставляет оба кода на вкладке «Объединить результаты» и видит общую картину и реальные расхождения в восприятии.</p>
+
+          <div class="mode-tabs" id="dualSubTabs">
+            <button class="mode-tab active" data-dualmode="fill">Заполнить свою анкету</button>
+            <button class="mode-tab" data-dualmode="combine">Объединить результаты</button>
+          </div>
+        </div>
+      </section>
+
+      <div id="dualFill">
+        <section class="tool" style="padding-top:0">
+          <div class="container tool-narrow">
+            <div class="tool-card">
+              <h3>С кем вы оцениваете партнёрство?</h3>
+              <div class="type-row" id="dualTypeRow">
+                <button class="type-btn active" data-type="Бизнес-партнёр">Бизнес-партнёр</button>
+                <button class="type-btn" data-type="Супруг(а) в бизнесе">Супруг(а) в бизнесе</button>
+                <button class="type-btn" data-type="Партнёр в жизни">Партнёр в жизни</button>
+              </div>
+              <div class="names">
+                <div class="field">
+                  <label>Ваше имя</label>
+                  <input type="text" id="dualNameMine" placeholder="Например, Жанна">
+                </div>
+                <div class="field">
+                  <label id="dualPartnerLabel">Имя партнёра</label>
+                  <input type="text" id="dualNamePartner" placeholder="Например, Алексей">
+                </div>
+              </div>
+              <div class="progress-wrap">
+                <div class="progress-track"><div class="progress-fill" id="dualProgressFill"></div></div>
+                <div class="progress-label" id="dualProgressLabel">Оценено 0 из 9</div>
+              </div>
+            </div>
+
+            <div id="dualCapitalsHost" class="tool-card"></div>
+
+            <div class="tool-card code-box">
+              <h3>Код для отправки организатору</h3>
+              <p class="lede" style="margin-bottom:14px;font-size:14px;">Нажмите «Сформировать код», затем скопируйте его или отправьте сразу на email.</p>
+              <textarea id="dualCode" rows="4" readonly placeholder="Код появится здесь после нажатия «Сформировать код»"></textarea>
+              <div class="btn-row">
+                <button class="btn btn--ghost" id="dualGenBtn">Сформировать код</button>
+                <button class="btn btn--ghost" id="dualCopyBtn">Скопировать код</button>
+                <span class="copy-flash" id="dualCopyFlash"></span>
+              </div>
+              <div class="names" style="margin-top:16px;">
+                <div class="field">
+                  <label>Email организатора</label>
+                  <input type="text" id="dualOrganizerEmail" value="zvborodina@gmail.com">
+                </div>
+                <div class="field" style="align-self:end;">
+                  <button class="btn btn--primary" id="dualMailBtn" style="width:100%;">Отправить код на email</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div id="dualCombine" hidden>
+        <section class="tool" style="padding-top:0">
+          <div class="container tool-narrow">
+            <div class="tool-card">
+              <h3>Вставьте коды обоих участников</h3>
+              <p class="lede" style="margin-bottom:14px;font-size:14px;">Порядок не важен — страница сама определит, кто где.</p>
+              <div class="names">
+                <div class="field">
+                  <label>Код участника 1</label>
+                  <textarea id="codeA" rows="4" placeholder="Вставьте код первого участника"></textarea>
+                </div>
+                <div class="field">
+                  <label>Код участника 2</label>
+                  <textarea id="codeB" rows="4" placeholder="Вставьте код второго участника"></textarea>
+                </div>
+              </div>
+              <button class="btn btn--primary" id="combineBtn" style="margin-top:16px;">Показать объединённый результат</button>
+              <div class="err-box" id="combineError"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="tool on-plum" id="combineResults" hidden>
+          <div class="container tool-narrow">
+            <p class="kicker">Объединённый результат</p>
+            <h2>Где вы сходитесь, а где — нет</h2>
+            <p class="lede" id="combineSub">Реальное распределение вклада (по самооценке каждого) и капиталы, где восприятие расходится сильнее всего.</p>
+
+            <div class="split-labels">
+              <span class="m" id="cSplitMineLabel"></span>
+              <span class="p" id="cSplitPartnerLabel"></span>
+            </div>
+            <div class="split-row">
+              <div class="split-bar">
+                <div class="split-mine" id="cSplitMine" style="width:50%;"></div>
+                <div class="split-partner" id="cSplitPartner" style="width:50%;"></div>
+              </div>
+            </div>
+
+            <div class="legend">
+              <span><i class="dot dot--mine"></i>Самооценка</span>
+              <span><i class="dot dot--partner"></i>Оценка партнёра</span>
+            </div>
+            <div class="radar-pair">
+              <div><h3 id="radarALabel"></h3><svg id="radarA" width="300" height="300" viewBox="0 0 480 480"></svg></div>
+              <div><h3 id="radarBLabel"></h3><svg id="radarB" width="300" height="300" viewBox="0 0 480 480"></svg></div>
+            </div>
+
+            <div id="combineWarn"></div>
+
+            <div class="gaps">
+              <h3>Где расхождение в восприятии самое большое</h3>
+              <div id="combineGapsHost"></div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <section class="tool" style="padding-top:0">
+      <div class="container tool-narrow">
+        <a class="back-link" href="/">← На главную</a>
+        <p class="muted" style="font-size:12px;margin-top:18px;">Методика «Капитал твоей жизни». Оценки не сохраняются на сервере — считаются прямо в браузере. Коды для объединения результатов содержат только введённые цифры и имена — отправляйте их тем, кому доверяете.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container site-footer__inner">
+      <div><strong>Жанна Бородина</strong> — финансовый советник</div>
+      <nav class="site-footer__docs" aria-label="Документы">
+        <a href="/privacy.html">Политика обработки персональных данных</a>
+        <a href="/consent-pdn.html">Согласие на обработку ПДн</a>
+        <a href="/consent-ads.html">Согласие на получение рекламы</a>
+        <a href="/offer.html">Публичная оферта</a>
+      </nav>
+      <p class="site-footer__req">
+        ИП Бородина Жанна Валентиновна · ИНН 344306618596 · ОГРНИП 325344300005629<br />
+        © 2026 Жанна Бородина
+      </p>
+    </div>
+  </footer>
+
+<script>
+const CAPITALS = [
+  {id:1,name:"Материальный",
+   desc:{"Бизнес-партнёр":"Кто вносит деньги, оборудование, активы в компанию — и в какой доле это отражено в документах.",
+         "Супруг(а) в бизнесе":"Кто вкладывает в общий бизнес — и совпадает ли это с тем, как поделены доли и семейный бюджет.",
+         "Партнёр в жизни":"Кто и сколько вносит в семейный бюджет — деньги, накопления, имущество."},
+   gap:{"Бизнес-партнёр":"Разница в оценках — частый повод для конфликта в компании. Зафиксируйте вклад в партнёрском соглашении, а не полагайтесь на память.",
+        "Супруг(а) в бизнесе":"Здесь легко перепутать «вклад в семью» и «вклад в бизнес». Разделите два разговора: доли в компании отдельно, семейный бюджет отдельно.",
+        "Партнёр в жизни":"Самый частый повод для скрытых обид — не нехватка денег, а несовпадение ощущения «кто сколько вносит». Стоит вслух обсудить бюджет."}},
+  {id:2,name:"Физиологический",
+   desc:{"Бизнес-партнёр":"Чьё состояние — здоровье, энергия, устойчивость к стрессу — определяет качество решений в компании.",
+         "Супруг(а) в бизнесе":"Кто чаще выгорает от совмещения ролей супруга и партнёра по бизнесу одновременно.",
+         "Партнёр в жизни":"Кто заботится о здоровье и эмоциональном состоянии в семье — своём и партнёра."},
+   gap:{"Бизнес-партнёр":"Партнёр в истощении — риск для всей компании: непредсказуемые решения, срывы сроков. Это забота о бизнесе, а не только о себе.",
+        "Супруг(а) в бизнесе":"Когда партнёр по бизнесу и супруг — один человек, выгорание бьёт сразу по двум сферам жизни. Договоритесь о паузах заранее.",
+        "Партнёр в жизни":"Если один тянет эмоциональную нагрузку в одиночку — это не мелочь. Открытый разговор о состоянии друг друга снимает половину бытовых конфликтов."}},
+  {id:3,name:"Социальный",
+   desc:{"Бизнес-партнёр":"Чьи деловые связи и контакты приносят компании клиентов, инвесторов, партнёрства.",
+         "Супруг(а) в бизнесе":"Чьи связи работают одновременно и на бизнес, и на семью — и не путаются ли они.",
+         "Партнёр в жизни":"Чей круг общения и друзья становятся общей поддержкой для семьи."},
+   gap:{"Бизнес-партнёр":"Без прозрачности, чьи контакты «в общий бизнес», это превращается в «я привёл больше клиентов». Проговорите это явно.",
+        "Супруг(а) в бизнесе":"Ваш общий круг общения смешивает деловые и семейные связи — стоит понимать, где чья зона.",
+        "Партнёр в жизни":"Объединение дружеских кругов даёт семье больше опоры — если оба чувствуют, что вклад в общение взаимный."}},
+  {id:4,name:"Административный",
+   desc:{"Бизнес-партнёр":"Кто берёт на себя бухгалтерию, юридические вопросы и переговоры с контрагентами.",
+         "Супруг(а) в бизнесе":"Кто решает бумажные вопросы — и в бизнесе, и дома — а кто от них полностью освобождён.",
+         "Партнёр в жизни":"Кто ведёт семейные дела — счета, документы, организацию быта."},
+   gap:{"Бизнес-партнёр":"Сильные бизнес-партнёрства распределяют административные задачи по тому, кто лучше умеет, а не тянут поровну через силу.",
+        "Супруг(а) в бизнесе":"Если один и дома, и в бизнесе несёт всю бюрократию — это удвоенная нагрузка, которую легко не заметить.",
+        "Партнёр в жизни":"Быт держится дольше, если задачи распределены по силам, а не поровну «для справедливости»."}},
+  {id:5,name:"Политический",
+   desc:{"Бизнес-партнёр":"Чьё влияние на отраслевые круги и регуляторов открывает компании новые двери.",
+         "Супруг(а) в бизнесе":"Чьи связи во внешнем мире — власть, отрасль — работают на общий бизнес.",
+         "Партнёр в жизни":"Чьё положение и связи во внешнем мире дают семье дополнительный вес и возможности."},
+   gap:{"Бизнес-партнёр":"Разный доступ к влиятельным кругам расширяет возможности компании — если об этом ресурсе вообще говорят вслух.",
+        "Супруг(а) в бизнесе":"Связи одного партнёра во внешнем мире могут усиливать бизнес семьи — стоит явно решить, как их использовать вместе.",
+        "Партнёр в жизни":"Положение и связи одного из партнёров часто остаются недооценённым ресурсом семьи, если о них не говорят прямо."}},
+  {id:6,name:"Культурный",
+   desc:{"Бизнес-партнёр":"Насколько совпадают деловые ценности и стиль работы — от переговоров до отношения к риску.",
+         "Супруг(а) в бизнесе":"Совпадают ли ваши ценности и в браке, и в том, как вести бизнес вместе.",
+         "Партнёр в жизни":"Насколько совпадают ценности, привычки и образ жизни в семье."},
+   gap:{"Бизнес-партнёр":"Несовпадение деловых ценностей — самый трудноисправимый конфликт постфактум. Лучше сверить до подписания документов, чем через два года.",
+        "Супруг(а) в бизнесе":"Если ценности расходятся и в браке, и в бизнесе одновременно, конфликт множится вдвое. Сверяйте это отдельно от операционки.",
+        "Партнёр в жизни":"Несовпадение образа жизни и ценностей труднее всего исправить постфактум. Лучше сверить в начале, чем через годы совместной жизни."}},
+  {id:7,name:"Символический",
+   desc:{"Бизнес-партнёр":"Чьё имя и репутация формируют образ компании на рынке.",
+         "Супруг(а) в бизнесе":"Кто «лицо» бизнеса на публике — и не конкурирует ли это с ролями в браке.",
+         "Партнёр в жизни":"Чья репутация и положение в обществе больше видны со стороны — и насколько это ощущается справедливым."},
+   gap:{"Бизнес-партнёр":"Если не договориться, кто «лицо» компании на публике, конкуренция за узнаваемость становится тихим источником напряжения в команде.",
+        "Супруг(а) в бизнесе":"Публичность одного партнёра может незаметно перетягивать статус в браке — стоит явно обсуждать роли на публике и дома.",
+        "Партнёр в жизни":"Разница в узнаваемости партнёров в обществе редко проговаривается, но может ощущаться как несправедливость, если не обсуждать это прямо."}},
+  {id:8,name:"Профессиональный",
+   desc:{"Бизнес-партнёр":"Чьи профессиональные навыки и экспертиза двигают продукт и бизнес вперёд.",
+         "Супруг(а) в бизнесе":"Дополняют ли ваши профессиональные роли друг друга в компании, или дублируются.",
+         "Партнёр в жизни":"Чьи навыки и знания чаще решают практические задачи семьи."},
+   gap:{"Бизнес-партнёр":"Бизнес сильнее всего работает, когда экспертиза партнёров дополняет, а не дублирует друг друга.",
+        "Супруг(а) в бизнесе":"Если оба тянут одну и ту же функцию в бизнесе, это чаще конкуренция за зону ответственности, а не синергия — и дома это тоже чувствуется.",
+        "Партнёр в жизни":"Разные сильные стороны партнёров закрывают больше задач семьи, чем если оба хороши в одном и том же."}},
+  {id:9,name:"Временной",
+   desc:{"Бизнес-партнёр":"Кто сколько часов и на каком этапе реально вкладывает в компанию.",
+         "Супруг(а) в бизнесе":"Как делится время между бизнесом, домом и друг другом — и хватает ли его на всё.",
+         "Партнёр в жизни":"Сколько времени и внимания каждый реально даёт отношениям и семье."},
+   gap:{"Бизнес-партнёр":"Несовпадение ожиданий о том, сколько часов каждый готов давать компании — один из самых частых непроговорённых конфликтов партнёрства.",
+        "Супруг(а) в бизнесе":"Время, которое уходит на бизнес, автоматически забирается у семьи — стоит явно проговорить, сколько часов на что закладывать.",
+        "Партнёр в жизни":"Несовпадение ожиданий о времени друг для друга — самый частый непроговорённый источник отдаления в отношениях."}}
+];
+
+const RESULTS_SUB = {
+  "Бизнес-партнёр":"Распределение вклада в компанию и капиталы, где расхождение в оценках самое большое — с них стоит начать разговор с партнёром.",
+  "Супруг(а) в бизнесе":"Распределение вклада в общее дело и капиталы, где ваши оценки расходятся сильнее всего — и в бизнесе, и дома.",
+  "Партнёр в жизни":"Распределение вклада в отношения и капиталы, где расхождение в оценках самое большое — с них стоит начать разговор."
+};
+const CTA_TEXT = {
+  "Бизнес-партнёр":{h:"Хотите обсудить результат вместе с партнёром по бизнесу?",
+    p:"Оставьте контакт — вышлю разбор и приглашение на консультацию, где разберём именно ваши капиталы с наибольшим расхождением."},
+  "Супруг(а) в бизнесе":{h:"Хотите обсудить результат вместе — и как партнёры, и как супруги?",
+    p:"Оставьте контакт — вышлю разбор и приглашение на консультацию, где разберём капиталы с наибольшим расхождением и в бизнесе, и в семье."},
+  "Партнёр в жизни":{h:"Хотите обсудить результат вместе с партнёром?",
+    p:"Оставьте контакт — вышлю разбор и приглашение на консультацию, где разберём именно ваши капиталы с наибольшим расхождением."}
+};
+
+const LABEL_LINES = {
+  1:["Материальный"], 2:["Физиологи-","ческий"], 3:["Социальный"],
+  4:["Администра-","тивный"], 5:["Политический"], 6:["Культурный"],
+  7:["Символи-","ческий"], 8:["Профессио-","нальный"], 9:["Временной"]
+};
+
+function renderRadar(svgEl, seriesList){
+  const cx=240, cy=240, maxR=140;
+  const n = CAPITALS.length;
+  const angle = i => (Math.PI*2*i/n) - Math.PI/2;
+  const pt = (i,val) => {
+    const r = (val/10)*maxR;
+    const a = angle(i);
+    return [cx + r*Math.cos(a), cy + r*Math.sin(a)];
+  };
+  let svgContent = '';
+  [0.25,0.5,0.75,1].forEach(f=>{
+    let ring = CAPITALS.map((c,i)=>pt(i,10*f).join(',')).join(' ');
+    svgContent += `<polygon points="${ring}" fill="none" stroke="var(--plum-line)" stroke-opacity=".45" stroke-width="1"/>`;
+  });
+  CAPITALS.forEach((c,i)=>{
+    const [x,y] = pt(i,10);
+    svgContent += `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="var(--plum-line)" stroke-opacity=".45" stroke-width="1"/>`;
+    const a = angle(i);
+    const cosA = Math.cos(a);
+    const anchor = cosA > 0.2 ? 'start' : (cosA < -0.2 ? 'end' : 'middle');
+    const lx = cx + (maxR+22)*cosA;
+    const ly = cy + (maxR+22)*Math.sin(a);
+    const lines = LABEL_LINES[c.id];
+    if(lines.length===1){
+      svgContent += `<text x="${lx}" y="${ly}" font-size="11" font-weight="500" fill="var(--plum-ink)" fill-opacity=".8" text-anchor="${anchor}" dominant-baseline="middle" font-family="Inter,sans-serif">${lines[0]}</text>`;
+    } else {
+      const tspans = lines.map((line,idx)=>`<tspan x="${lx}" dy="${idx===0?-6:13}">${line}</tspan>`).join('');
+      svgContent += `<text x="${lx}" y="${ly}" font-size="11" font-weight="500" fill="var(--plum-ink)" fill-opacity=".8" text-anchor="${anchor}" dominant-baseline="middle" font-family="Inter,sans-serif">${tspans}</text>`;
+    }
+  });
+  seriesList.forEach(s=>{
+    const pts = CAPITALS.map((c,i)=>pt(i,s.values[i]).join(',')).join(' ');
+    svgContent += `<polygon points="${pts}" fill="${s.color}" fill-opacity="0.2" stroke="${s.color}" stroke-width="2"/>`;
+  });
+  svgEl.innerHTML = svgContent;
+}
+
+function encodeCode(obj){
+  return btoa(unescape(encodeURIComponent(JSON.stringify(obj))));
+}
+function decodeCode(str){
+  return JSON.parse(decodeURIComponent(escape(atob(str.trim()))));
+}
+
+/* ---------- Режим "один за двоих" ---------- */
+
+const state = { type:"Бизнес-партнёр", mine:{}, partner:{}, touched:{} };
+CAPITALS.forEach(c=>{ state.mine[c.id]=5; state.partner[c.id]=5; state.touched[c.id]=false; });
+
+function buildCapitalCards(host, idPrefix, st, onChange){
+  CAPITALS.forEach(c=>{
+    const card = document.createElement('div');
+    card.className='cap-card';
+    card.innerHTML = `
+      <div class="cap-head"><span class="cap-num">${c.id}</span><h3>${c.name}</h3></div>
+      <p class="cap-desc" id="${idPrefix}desc-${c.id}">${c.desc[st.type]}</p>
+      <div class="slider-row">
+        <div class="slider-top"><span class="who mine">Мой вклад</span><span class="val" id="${idPrefix}mval-${c.id}">5</span></div>
+        <input type="range" min="0" max="10" step="1" value="5" class="mine-slider" data-id="${c.id}" data-who="mine">
+      </div>
+      <div class="slider-row">
+        <div class="slider-top"><span class="who partner">Вклад партнёра (как вижу я)</span><span class="val" id="${idPrefix}pval-${c.id}">5</span></div>
+        <input type="range" min="0" max="10" step="1" value="5" class="partner-slider" data-id="${c.id}" data-who="partner">
+      </div>
+    `;
+    host.appendChild(card);
+    card.querySelectorAll('input[type=range]').forEach(inp=>{
+      inp.addEventListener('input', e=>{
+        const id = +e.target.dataset.id;
+        const who = e.target.dataset.who;
+        const v = +e.target.value;
+        st[who][id] = v;
+        st.touched[id] = true;
+        document.getElementById(idPrefix+(who==='mine'?'mval-':'pval-')+id).textContent = v;
+        onChange();
+      });
+    });
+  });
+}
+
+const host = document.getElementById('capitalsHost');
+buildCapitalCards(host, '', state, render);
+
+document.querySelectorAll('#typeRow .type-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('#typeRow .type-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    state.type = btn.dataset.type;
+    applyType();
+  });
+});
+
+function applyType(){
+  CAPITALS.forEach(c=>{
+    document.getElementById('desc-'+c.id).textContent = c.desc[state.type];
+  });
+  document.getElementById('resultsSub').textContent = RESULTS_SUB[state.type];
+  document.getElementById('ctaHeadline').textContent = CTA_TEXT[state.type].h;
+  document.getElementById('ctaSub').textContent = CTA_TEXT[state.type].p;
+  render();
+}
+
+function render(){
+  const touchedCount = Object.values(state.touched).filter(Boolean).length;
+  document.getElementById('progressFill').style.width = (touchedCount/9*100)+'%';
+  document.getElementById('progressLabel').textContent = 'Оценено '+touchedCount+' из 9';
+
+  const nameMine = document.getElementById('nameMine').value.trim() || 'Вы';
+  const namePartner = document.getElementById('namePartner').value.trim() || 'Партнёр';
+
+  let sumMine=0, sumPartner=0;
+  CAPITALS.forEach(c=>{ sumMine+=state.mine[c.id]; sumPartner+=state.partner[c.id]; });
+  const total = sumMine+sumPartner || 1;
+  const pctMine = Math.round(sumMine/total*100);
+  const pctPartner = 100-pctMine;
+
+  document.getElementById('splitMine').style.width = pctMine+'%';
+  document.getElementById('splitPartner').style.width = pctPartner+'%';
+  document.getElementById('splitMineLabel').textContent = nameMine+' — '+pctMine+'%';
+  document.getElementById('splitPartnerLabel').textContent = namePartner+' — '+pctPartner+'%';
+
+  renderRadar(document.getElementById('radar'), [
+    {values: CAPITALS.map(c=>state.partner[c.id]), color:'var(--plum-ink)'},
+    {values: CAPITALS.map(c=>state.mine[c.id]), color:'var(--plum-gold)'}
+  ]);
+
+  const gaps = CAPITALS.map(c=>({...c, diff: Math.abs(state.mine[c.id]-state.partner[c.id])}))
+    .sort((a,b)=>b.diff-a.diff).slice(0,3).filter(g=>g.diff>0);
+  const gh = document.getElementById('gapsHost');
+  gh.innerHTML = '';
+  if(gaps.length===0){
+    gh.innerHTML = '<div class="gap-item"><div class="g-text">Пока оценки совпадают — подвигайте ползунки, чтобы увидеть реальную картину.</div></div>';
+  } else {
+    gaps.forEach(g=>{
+      const div = document.createElement('div');
+      div.className='gap-item';
+      div.innerHTML = `<div class="g-name">${g.id}. ${g.name}</div>
+        <div class="g-diff">${nameMine}: ${state.mine[g.id]} &nbsp;•&nbsp; ${namePartner}: ${state.partner[g.id]} &nbsp;•&nbsp; разница ${g.diff}</div>
+        <div class="g-text">${g.gap[state.type]}</div>`;
+      gh.appendChild(div);
+    });
+  }
+}
+
+document.getElementById('nameMine').addEventListener('input', render);
+document.getElementById('namePartner').addEventListener('input', render);
+
+document.getElementById('ctaBtn').addEventListener('click', ()=>{
+  const ctaName = document.getElementById('ctaName').value.trim();
+  const ctaContact = document.getElementById('ctaContact').value.trim();
+  const nameMine = document.getElementById('nameMine').value.trim() || 'Вы';
+  const namePartner = document.getElementById('namePartner').value.trim() || 'Партнёр';
+  let sumMine=0,sumPartner=0;
+  CAPITALS.forEach(c=>{ sumMine+=state.mine[c.id]; sumPartner+=state.partner[c.id]; });
+  const total = sumMine+sumPartner || 1;
+  const pctMine = Math.round(sumMine/total*100);
+  const pctPartner = 100-pctMine;
+  const gaps = CAPITALS.map(c=>({...c, diff: Math.abs(state.mine[c.id]-state.partner[c.id])}))
+    .sort((a,b)=>b.diff-a.diff).slice(0,3).filter(g=>g.diff>0)
+    .map(g=>`${g.id}. ${g.name} (разница ${g.diff})`).join('%0D%0A');
+  const subject = encodeURIComponent('Заявка на разбор — калькулятор вклада в партнёрство');
+  const body = 'Имя: '+encodeURIComponent(ctaName)+'%0D%0A'+
+    'Контакт: '+encodeURIComponent(ctaContact)+'%0D%0A'+
+    'Тип партнёрства: '+encodeURIComponent(state.type)+'%0D%0A'+
+    nameMine+': '+pctMine+'%25, '+namePartner+': '+pctPartner+'%25%0D%0A'+
+    'Топ расхождений:%0D%0A'+(gaps||'нет заметных расхождений');
+  window.location.href = 'mailto:zvborodina@gmail.com?subject='+subject+'&body='+body;
+});
+
+render();
+
+/* ---------- Переключение режимов ---------- */
+
+document.querySelectorAll('#modeTabs .mode-tab').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('#modeTabs .mode-tab').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    const mode = btn.dataset.mode;
+    document.getElementById('soloMode').hidden = mode!=='solo';
+    document.getElementById('dualMode').hidden = mode!=='dual';
+  });
+});
+
+document.querySelectorAll('#dualSubTabs .mode-tab').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('#dualSubTabs .mode-tab').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    const m = btn.dataset.dualmode;
+    document.getElementById('dualFill').hidden = m!=='fill';
+    document.getElementById('dualCombine').hidden = m!=='combine';
+  });
+});
+
+/* ---------- Режим "заполняем по отдельности" — своя анкета ---------- */
+
+const dualState = { type:"Бизнес-партнёр", mine:{}, partner:{}, touched:{} };
+CAPITALS.forEach(c=>{ dualState.mine[c.id]=5; dualState.partner[c.id]=5; dualState.touched[c.id]=false; });
+
+const dualHost = document.getElementById('dualCapitalsHost');
+buildCapitalCards(dualHost, 'dual-', dualState, renderDualFill);
+
+document.querySelectorAll('#dualTypeRow .type-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('#dualTypeRow .type-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    dualState.type = btn.dataset.type;
+    CAPITALS.forEach(c=>{
+      document.getElementById('dual-desc-'+c.id).textContent = c.desc[dualState.type];
+    });
+    renderDualFill();
+  });
+});
+
+function renderDualFill(){
+  const touchedCount = Object.values(dualState.touched).filter(Boolean).length;
+  document.getElementById('dualProgressFill').style.width = (touchedCount/9*100)+'%';
+  document.getElementById('dualProgressLabel').textContent = 'Оценено '+touchedCount+' из 9';
+}
+renderDualFill();
+
+document.getElementById('dualGenBtn').addEventListener('click', ()=>{
+  const payload = {
+    v:1,
+    type: dualState.type,
+    name: document.getElementById('dualNameMine').value.trim() || 'Участник',
+    partnerName: document.getElementById('dualNamePartner').value.trim() || 'Партнёр',
+    mine: dualState.mine,
+    partner: dualState.partner
+  };
+  document.getElementById('dualCode').value = encodeCode(payload);
+});
+
+document.getElementById('dualCopyBtn').addEventListener('click', ()=>{
+  const ta = document.getElementById('dualCode');
+  if(!ta.value){ return; }
+  ta.select();
+  const flash = document.getElementById('dualCopyFlash');
+  const showFlash = ()=>{ flash.textContent='Скопировано'; setTimeout(()=>flash.textContent='',2000); };
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(ta.value).then(showFlash).catch(()=>{
+      document.execCommand('copy'); showFlash();
+    });
+  } else {
+    document.execCommand('copy'); showFlash();
+  }
+});
+
+document.getElementById('dualMailBtn').addEventListener('click', ()=>{
+  const code = document.getElementById('dualCode').value;
+  if(!code){ return; }
+  const email = document.getElementById('dualOrganizerEmail').value.trim() || 'zvborodina@gmail.com';
+  const name = document.getElementById('dualNameMine').value.trim() || 'Участник';
+  const subject = encodeURIComponent('Код анкеты — калькулятор вклада в партнёрство ('+name+')');
+  const body = encodeURIComponent('Код для объединения результатов:\n\n'+code);
+  window.location.href = 'mailto:'+encodeURIComponent(email)+'?subject='+subject+'&body='+body;
+});
+
+/* ---------- Режим "заполняем по отдельности" — объединение ---------- */
+
+document.getElementById('combineBtn').addEventListener('click', ()=>{
+  const errEl = document.getElementById('combineError');
+  errEl.textContent = '';
+  document.getElementById('combineResults').hidden = true;
+
+  const rawA = document.getElementById('codeA').value;
+  const rawB = document.getElementById('codeB').value;
+  if(!rawA.trim() || !rawB.trim()){
+    errEl.textContent = 'Вставьте оба кода перед объединением.';
+    return;
+  }
+
+  let dataA, dataB;
+  try{
+    dataA = decodeCode(rawA);
+    dataB = decodeCode(rawB);
+  }catch(e){
+    errEl.textContent = 'Не удалось распознать один из кодов. Проверьте, что код скопирован полностью, без пропусков.';
+    return;
+  }
+  if(!dataA || !dataB || dataA.v!==1 || dataB.v!==1 || !dataA.mine || !dataB.mine){
+    errEl.textContent = 'Код повреждён или создан другой версией калькулятора.';
+    return;
+  }
+
+  const type = dataA.type || dataB.type || 'Бизнес-партнёр';
+  const warnEl = document.getElementById('combineWarn');
+  warnEl.innerHTML = '';
+  if(dataA.type && dataB.type && dataA.type!==dataB.type){
+    warnEl.innerHTML = '<div class="warn-box">Участники выбрали разный тип партнёрства ('+dataA.type+' и '+dataB.type+'). Показан разбор для «'+type+'».</div>';
+  }
+
+  const nameA = dataA.name || 'Участник 1';
+  const nameB = dataB.name || 'Участник 2';
+
+  const selfA = CAPITALS.map(c=>+dataA.mine[c.id]);
+  const viewOfAByB = CAPITALS.map(c=>+(dataB.partner ? dataB.partner[c.id] : 5));
+  const selfB = CAPITALS.map(c=>+dataB.mine[c.id]);
+  const viewOfBByA = CAPITALS.map(c=>+(dataA.partner ? dataA.partner[c.id] : 5));
+
+  const sumSelfA = selfA.reduce((s,v)=>s+v,0);
+  const sumSelfB = selfB.reduce((s,v)=>s+v,0);
+  const total = sumSelfA+sumSelfB || 1;
+  const pctA = Math.round(sumSelfA/total*100);
+  const pctB = 100-pctA;
+
+  document.getElementById('cSplitMine').style.width = pctA+'%';
+  document.getElementById('cSplitPartner').style.width = pctB+'%';
+  document.getElementById('cSplitMineLabel').textContent = nameA+' — '+pctA+'%';
+  document.getElementById('cSplitPartnerLabel').textContent = nameB+' — '+pctB+'%';
+
+  document.getElementById('combineSub').textContent = RESULTS_SUB[type];
+  document.getElementById('radarALabel').textContent = 'Вклад '+nameA;
+  document.getElementById('radarBLabel').textContent = 'Вклад '+nameB;
+
+  renderRadar(document.getElementById('radarA'), [
+    {values: viewOfAByB, color:'var(--plum-ink)'},
+    {values: selfA, color:'var(--plum-gold)'}
+  ]);
+  renderRadar(document.getElementById('radarB'), [
+    {values: viewOfBByA, color:'var(--plum-ink)'},
+    {values: selfB, color:'var(--plum-gold)'}
+  ]);
+
+  const gapsA = CAPITALS.map((c,i)=>({...c, who:nameA, other:nameB, selfVal:selfA[i], otherVal:viewOfAByB[i], diff: Math.abs(selfA[i]-viewOfAByB[i])}));
+  const gapsB = CAPITALS.map((c,i)=>({...c, who:nameB, other:nameA, selfVal:selfB[i], otherVal:viewOfBByA[i], diff: Math.abs(selfB[i]-viewOfBByA[i])}));
+  const topGaps = gapsA.concat(gapsB).sort((a,b)=>b.diff-a.diff).filter(g=>g.diff>0).slice(0,5);
+
+  const gh = document.getElementById('combineGapsHost');
+  gh.innerHTML = '';
+  if(topGaps.length===0){
+    gh.innerHTML = '<div class="gap-item"><div class="g-text">Самооценка и оценка партнёра совпадают по всем капиталам — редкий и хороший знак.</div></div>';
+  } else {
+    topGaps.forEach(g=>{
+      const div = document.createElement('div');
+      div.className='gap-item';
+      div.innerHTML = `<div class="g-name">${g.id}. ${g.name} — вклад ${g.who}</div>
+        <div class="g-diff">${g.who} сам(а) оценивает себя: ${g.selfVal} &nbsp;•&nbsp; ${g.other} видит: ${g.otherVal} &nbsp;•&nbsp; разница ${g.diff}</div>
+        <div class="g-text">${g.gap[type]}</div>`;
+      gh.appendChild(div);
+    });
+  }
+
+  document.getElementById('combineResults').hidden = false;
+});
+</script>
+</body>
+</html>
