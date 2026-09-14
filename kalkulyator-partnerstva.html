@@ -243,6 +243,8 @@
             <input type="text" id="ctaContact" placeholder="Email или Telegram">
             <button class="btn btn--primary" id="ctaBtn">Получить разбор</button>
           </div>
+          <p class="muted" style="font-size:12.5px;margin-top:10px;">Кнопка открывает ваше почтовое приложение. Если оно не настроено в браузере — <button type="button" id="ctaCopyBtn" style="background:none;border:0;padding:0;font:inherit;color:var(--gold-emblem);text-decoration:underline;cursor:pointer;">покажите текст заявки</button>, чтобы скопировать вручную и прислать любым удобным способом.</p>
+          <textarea id="ctaCopyArea" readonly hidden rows="6" style="width:100%;margin-top:10px;font-family:'SF Mono',Consolas,monospace;font-size:12px;"></textarea>
         </div>
       </section>
     </div>
@@ -628,7 +630,7 @@ function render(){
 document.getElementById('nameMine').addEventListener('input', render);
 document.getElementById('namePartner').addEventListener('input', render);
 
-document.getElementById('ctaBtn').addEventListener('click', ()=>{
+function buildCtaReport(){
   const ctaName = document.getElementById('ctaName').value.trim();
   const ctaContact = document.getElementById('ctaContact').value.trim();
   const nameMine = document.getElementById('nameMine').value.trim() || 'Вы';
@@ -638,16 +640,33 @@ document.getElementById('ctaBtn').addEventListener('click', ()=>{
   const total = sumMine+sumPartner || 1;
   const pctMine = Math.round(sumMine/total*100);
   const pctPartner = 100-pctMine;
-  const gaps = CAPITALS.map(c=>({...c, diff: Math.abs(state.mine[c.id]-state.partner[c.id])}))
+  const gapsLines = CAPITALS.map(c=>({...c, diff: Math.abs(state.mine[c.id]-state.partner[c.id])}))
     .sort((a,b)=>b.diff-a.diff).slice(0,3).filter(g=>g.diff>0)
-    .map(g=>`${g.id}. ${g.name} (разница ${g.diff})`).join('%0D%0A');
-  const subject = encodeURIComponent('Заявка на разбор — калькулятор вклада в партнёрство');
-  const body = 'Имя: '+encodeURIComponent(ctaName)+'%0D%0A'+
-    'Контакт: '+encodeURIComponent(ctaContact)+'%0D%0A'+
-    'Тип партнёрства: '+encodeURIComponent(state.type)+'%0D%0A'+
-    nameMine+': '+pctMine+'%25, '+namePartner+': '+pctPartner+'%25%0D%0A'+
-    'Топ расхождений:%0D%0A'+(gaps||'нет заметных расхождений');
-  window.location.href = 'mailto:zvborodina@gmail.com?subject='+subject+'&body='+body;
+    .map(g=>`${g.id}. ${g.name} (разница ${g.diff})`);
+  const subject = 'Заявка на разбор — калькулятор вклада в партнёрство';
+  const plainBody = 'Имя: '+ctaName+'\n'+
+    'Контакт: '+ctaContact+'\n'+
+    'Тип партнёрства: '+state.type+'\n'+
+    nameMine+': '+pctMine+'%, '+namePartner+': '+pctPartner+'%\n'+
+    'Топ расхождений:\n'+(gapsLines.join('\n')||'нет заметных расхождений');
+  return {subject, plainBody};
+}
+
+document.getElementById('ctaBtn').addEventListener('click', ()=>{
+  const {subject, plainBody} = buildCtaReport();
+  window.location.href = 'mailto:zvborodina@gmail.com?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(plainBody);
+});
+
+document.getElementById('ctaCopyBtn').addEventListener('click', ()=>{
+  const {subject, plainBody} = buildCtaReport();
+  const area = document.getElementById('ctaCopyArea');
+  area.value = subject+'\n\n'+plainBody;
+  area.hidden = false;
+  area.focus();
+  area.select();
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(area.value).catch(()=>{});
+  }
 });
 
 render();
