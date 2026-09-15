@@ -243,8 +243,11 @@
             <input type="text" id="ctaContact" placeholder="Email или Telegram">
             <button class="btn btn--primary" id="ctaBtn">Получить разбор</button>
           </div>
-          <p class="muted" style="font-size:12.5px;margin-top:10px;">Кнопка открывает ваше почтовое приложение. Если оно не настроено в браузере — <button type="button" id="ctaCopyBtn" style="background:none;border:0;padding:0;font:inherit;color:var(--gold-emblem);text-decoration:underline;cursor:pointer;">покажите текст заявки</button>, чтобы скопировать вручную и прислать любым удобным способом.</p>
-          <textarea id="ctaCopyArea" readonly hidden rows="6" style="width:100%;margin-top:10px;font-family:'SF Mono',Consolas,monospace;font-size:12px;"></textarea>
+          <div id="ctaConfirm" hidden style="margin-top:16px;padding:16px 18px;background:var(--bg);border:1px solid var(--line);border-radius:10px;">
+            <p style="margin:0 0 8px;font-size:14.5px;font-weight:500;color:var(--ink);">Открываем письмо в вашей почтовой программе — проверьте, не появилось ли оно в новой вкладке или окне, и нажмите там «Отправить».</p>
+            <p style="margin:0 0 10px;font-size:13px;color:var(--muted);">Если письмо не открылось — текст заявки уже выделен ниже. Скопируйте его (Cmd/Ctrl+C) и пришлите любым удобным способом: почтой, в Telegram, WhatsApp.</p>
+            <textarea id="ctaCopyArea" readonly rows="6" style="width:100%;font-family:'SF Mono',Consolas,monospace;font-size:12px;"></textarea>
+          </div>
         </div>
       </section>
     </div>
@@ -654,19 +657,19 @@ function buildCtaReport(){
 
 document.getElementById('ctaBtn').addEventListener('click', ()=>{
   const {subject, plainBody} = buildCtaReport();
-  window.location.href = 'mailto:zvborodina@gmail.com?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(plainBody);
-});
 
-document.getElementById('ctaCopyBtn').addEventListener('click', ()=>{
-  const {subject, plainBody} = buildCtaReport();
+  const confirmBox = document.getElementById('ctaConfirm');
   const area = document.getElementById('ctaCopyArea');
   area.value = subject+'\n\n'+plainBody;
-  area.hidden = false;
+  confirmBox.hidden = false;
+  confirmBox.scrollIntoView({behavior:'smooth', block:'nearest'});
   area.focus();
   area.select();
   if(navigator.clipboard && navigator.clipboard.writeText){
     navigator.clipboard.writeText(area.value).catch(()=>{});
   }
+
+  window.location.href = 'mailto:zvborodina@gmail.com?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(plainBody);
 });
 
 render();
