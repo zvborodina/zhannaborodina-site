@@ -1,192 +1,238 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Калькулятор вклада в партнёрство — 9 капиталов</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --bg:#FBF8F3;
-    --card:#FFFFFF;
-    --ink:#2B2620;
-    --ink-soft:#6B6459;
-    --border:#E7E0D4;
-    --mine:#0F6E56;
-    --mine-soft:#E1F5EE;
-    --partner:#BA7517;
-    --partner-soft:#FAEEDA;
-    --accent:#8B4A3C;
-    --gap-flag:#FAECE7;
-    --gap-flag-ink:#712B13;
-    --radius:14px;
-  }
-  *{box-sizing:border-box;}
-  body{
-    margin:0;
-    background:var(--bg);
-    color:var(--ink);
-    font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
-    line-height:1.6;
-    padding:0 0 60px;
-  }
-  .wrap{max-width:760px;margin:0 auto;padding:40px 24px 0;}
-  h1,h2,h3{font-family:'Playfair Display',Georgia,serif;font-weight:600;margin:0 0 8px;}
-  h1{font-size:32px;line-height:1.25;}
-  h2{font-size:22px;}
-  h3{font-size:18px;margin-bottom:6px;}
-  .sub{color:var(--ink-soft);font-size:16px;margin:0 0 28px;max-width:560px;}
-  .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px 28px;margin-bottom:20px;}
-  .type-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:8px;}
-  .type-btn{
-    border:1px solid var(--border);background:#fff;color:var(--ink-soft);
-    border-radius:999px;padding:9px 18px;font-size:14px;font-family:inherit;cursor:pointer;
-    transition:all .15s;
-  }
-  .type-btn.active{background:var(--ink);color:#fff;border-color:var(--ink);}
-  .names{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px;}
-  .field label{display:block;font-size:13px;color:var(--ink-soft);margin-bottom:6px;}
-  .field input{
-    width:100%;border:1px solid var(--border);border-radius:8px;padding:10px 12px;
-    font-family:inherit;font-size:15px;color:var(--ink);background:#fff;
-  }
-  .field input:focus{outline:none;border-color:var(--mine);}
-  .progress-wrap{display:flex;align-items:center;gap:12px;margin:24px 0 8px;}
-  .progress-track{flex:1;height:6px;border-radius:3px;background:var(--border);overflow:hidden;}
-  .progress-fill{height:100%;background:var(--mine);width:0%;transition:width .2s;}
-  .progress-label{font-size:13px;color:var(--ink-soft);white-space:nowrap;}
-  .cap-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:22px 26px;margin-bottom:14px;}
-  .cap-head{display:flex;align-items:baseline;gap:10px;margin-bottom:4px;}
-  .cap-num{font-family:'Playfair Display',serif;font-size:15px;color:var(--ink-soft);}
-  .cap-desc{color:var(--ink-soft);font-size:14px;margin:0 0 16px;}
-  .slider-row{margin-bottom:14px;}
-  .slider-top{display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;}
-  .slider-top .who{font-weight:500;}
-  .slider-top .val{font-variant-numeric:tabular-nums;font-weight:600;}
-  .who.mine{color:var(--mine);}
-  .who.partner{color:var(--partner);}
-  input[type=range]{
-    -webkit-appearance:none;width:100%;height:4px;border-radius:2px;background:var(--border);outline:none;
-  }
-  input[type=range]#dummy{display:none;}
-  input[type=range].mine-slider{accent-color:var(--mine);}
-  input[type=range].partner-slider{accent-color:var(--partner);}
-  input[type=range]::-webkit-slider-thumb{
-    -webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:currentColor;cursor:pointer;border:2px solid #fff;box-shadow:0 0 0 1px var(--border);
-  }
-  .results{background:var(--ink);color:#fff;border-radius:var(--radius);padding:32px 28px;margin:32px 0;}
-  .results h2{color:#fff;}
-  .results .sub{color:#C9C3B6;}
-  .split-row{display:flex;align-items:center;gap:16px;margin:20px 0 8px;}
-  .split-bar{flex:1;height:14px;border-radius:7px;overflow:hidden;display:flex;background:#3A342B;}
-  .split-mine{background:var(--mine);height:100%;}
-  .split-partner{background:var(--partner);height:100%;}
-  .split-labels{display:flex;justify-content:space-between;font-size:14px;margin-bottom:22px;}
-  .split-labels .m{color:#5DCAA5;}
-  .split-labels .p{color:#F0997B;}
-  .radar-wrap{display:flex;justify-content:center;margin:12px 0 20px;}
-  .legend{display:flex;gap:20px;justify-content:center;font-size:13px;margin-bottom:24px;}
-  .legend span{display:flex;align-items:center;gap:6px;}
-  .dot{width:10px;height:10px;border-radius:50%;display:inline-block;}
-  .gaps h3{color:#fff;font-size:16px;margin-bottom:14px;}
-  .gap-item{background:#3A342B;border-radius:10px;padding:14px 16px;margin-bottom:10px;}
-  .gap-item .g-name{font-weight:600;font-size:14px;margin-bottom:4px;color:#F0C97D;}
-  .gap-item .g-diff{font-size:12px;color:#C9C3B6;margin-bottom:6px;}
-  .gap-item .g-text{font-size:13px;color:#E6E2D6;line-height:1.55;}
-  .cta{background:var(--gap-flag);border:1px solid #F0997B;border-radius:var(--radius);padding:28px;text-align:left;}
-  .cta h2{color:var(--gap-flag-ink);}
-  .cta p{color:#8A4A2E;margin:0 0 18px;font-size:15px;}
-  .cta-row{display:flex;gap:12px;flex-wrap:wrap;}
-  .cta-row input{
-    flex:1;min-width:180px;border:1px solid #E0A388;border-radius:8px;padding:12px 14px;
-    font-family:inherit;font-size:15px;background:#fff;
-  }
-  .cta-btn{
-    background:var(--accent);color:#fff;border:none;border-radius:8px;padding:12px 22px;
-    font-family:inherit;font-size:15px;font-weight:500;cursor:pointer;white-space:nowrap;
-  }
-  .cta-btn:hover{background:#6E3A2F;}
-  .footnote{font-size:12px;color:var(--ink-soft);text-align:center;margin-top:28px;}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Калькулятор вклада в партнёрство — Жанна Бородина</title>
+  <meta name="description" content="Бесплатный инструмент по методике «9 капиталов»: оцените вклад в партнёрство — с бизнес-партнёром, супругом(ой) в бизнесе или партнёром в жизни — и увидьте, где расходятся оценки." />
+  <link rel="canonical" href="https://zhannaborodina.com/kalkulyator-partnerstva.html" />
+  <meta name="robots" content="index, follow" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="ru_RU" />
+  <meta property="og:url" content="https://zhannaborodina.com/kalkulyator-partnerstva.html" />
+  <meta property="og:title" content="Калькулятор вклада в партнёрство — 9 капиталов" />
+  <meta property="og:description" content="Оцените честно, кто что реально приносит в общее дело — и где расходятся ваши оценки." />
+  <meta property="og:image" content="https://zhannaborodina.com/assets/og.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="https://zhannaborodina.com/assets/og.png" />
+
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" />
+  <link rel="stylesheet" href="/assets/styles.css" />
+
+  <style>
+    .tool { padding: clamp(28px, 5vw, 44px) 0 clamp(56px, 9vw, 104px); }
+    .tool-narrow { max-width: 700px; }
+    .page-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; }
+    .page-head .emblem { width: 50px; flex: none; margin-top: 4px; }
+    .on-plum .page-head .emblem { color: var(--plum-line); }
+
+    .tool-card {
+      background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+      padding: clamp(20px, 3vw, 30px); margin-top: 20px;
+    }
+    .tool-card h3 { font-size: 17px; margin: 0 0 12px; }
+
+    .type-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
+    .type-btn {
+      border: 1px solid var(--line); background: var(--bg); color: var(--muted);
+      border-radius: 999px; padding: 9px 16px; font: inherit; font-size: 13.5px; cursor: pointer; transition: all .15s;
+    }
+    .type-btn.active { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+
+    .names { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 16px; }
+    .field label { display: block; font-size: 12.5px; color: var(--muted); margin-bottom: 6px; }
+    .field input { width: 100%; border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; font: inherit; font-size: 15px; color: var(--ink); background: var(--bg); }
+    .field input:focus { outline: none; border-color: var(--gold-emblem); }
+
+    .progress-wrap { display: flex; align-items: center; gap: 12px; margin: 22px 0 4px; }
+    .progress-track { flex: 1; height: 5px; border-radius: 3px; background: var(--line); overflow: hidden; }
+    .progress-fill { height: 100%; background: var(--gold-emblem); width: 0%; transition: width .2s; }
+    .progress-label { font-size: 12.5px; color: var(--muted); white-space: nowrap; }
+
+    .cap-card { border-top: 1px solid var(--line); padding: 24px 0; }
+    .cap-card:first-child { border-top: 0; }
+    .cap-head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 4px; }
+    .cap-num { font-family: var(--font-serif); font-size: 14px; color: var(--muted); }
+    .cap-card h3 { font-size: 17px; margin: 0; }
+    .cap-desc { color: var(--muted); font-size: 14px; margin: 6px 0 18px; max-width: 60ch; }
+
+    .slider-row { margin-bottom: 16px; }
+    .slider-top { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 7px; }
+    .slider-top .who { font-weight: 500; }
+    .slider-top .val { font-variant-numeric: tabular-nums; font-weight: 600; }
+    .who.mine { color: var(--gold-deep); }
+    .who.partner { color: var(--ink); }
+    input[type=range] { -webkit-appearance: none; width: 100%; height: 4px; border-radius: 2px; background: var(--line); outline: none; }
+    input[type=range].mine-slider { accent-color: var(--gold-deep); }
+    input[type=range].partner-slider { accent-color: var(--ink); }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 17px; height: 17px; border-radius: 50%; background: currentColor;
+      cursor: pointer; border: 2px solid var(--surface); box-shadow: 0 0 0 1px var(--line);
+    }
+
+    .split-row { display: flex; align-items: center; gap: 16px; margin: 18px 0 6px; }
+    .split-bar { flex: 1; height: 13px; border-radius: 7px; overflow: hidden; display: flex; background: color-mix(in srgb, var(--plum-ink) 14%, var(--plum-bg)); }
+    .split-mine { background: var(--plum-gold); height: 100%; }
+    .split-partner { background: var(--plum-ink); height: 100%; }
+    .split-labels { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 22px; }
+    .split-labels .m { color: var(--plum-gold); }
+    .split-labels .p { color: var(--plum-ink); }
+
+    .radar-wrap { display: flex; justify-content: center; margin: 8px 0 16px; }
+    .legend { display: flex; gap: 20px; justify-content: center; font-size: 13px; margin-bottom: 22px; }
+    .legend span { display: flex; align-items: center; gap: 6px; }
+    .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+    .dot--mine { background: var(--plum-gold); }
+    .dot--partner { background: var(--plum-ink); }
+
+    .gaps h3 { color: var(--plum-ink); font-size: 16px; margin-bottom: 14px; }
+    .gap-item { background: color-mix(in srgb, var(--plum-ink) 10%, var(--plum-bg)); border-radius: 10px; padding: 14px 16px; margin-bottom: 10px; }
+    .gap-item .g-name { font-weight: 600; font-size: 14px; margin-bottom: 4px; color: var(--plum-gold); }
+    .gap-item .g-diff { font-size: 12px; color: color-mix(in srgb, var(--plum-ink) 70%, transparent); margin-bottom: 6px; }
+    .gap-item .g-text { font-size: 13px; color: var(--plum-ink); line-height: 1.55; }
+
+    .cta-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 18px; }
+    .cta-row input { flex: 1; min-width: 180px; border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; font: inherit; font-size: 15px; background: var(--bg); color: var(--ink); }
+
+    .back-link { display: inline-block; margin-top: 8px; color: var(--muted); font-size: 13.5px; }
+    @media (max-width: 620px) { .names { grid-template-columns: 1fr; } .page-head .emblem { display: none; } }
+  </style>
 </head>
 <body>
-<div class="wrap">
-
-  <h1>Калькулятор вклада в партнёрство</h1>
-  <p class="sub">9 капиталов методики «Капитал твоей жизни» — не только деньги. Оцените честно, кто что реально приносит в общее дело: с бизнес-партнёром, супругом(ой) в бизнесе или партнёром в жизни.</p>
-
-  <div class="card">
-    <h3 style="margin-bottom:12px;">С кем вы оцениваете партнёрство?</h3>
-    <div class="type-row" id="typeRow">
-      <button class="type-btn active" data-type="Бизнес-партнёр">Бизнес-партнёр</button>
-      <button class="type-btn" data-type="Супруг(а) в бизнесе">Супруг(а) в бизнесе</button>
-      <button class="type-btn" data-type="Партнёр в жизни">Партнёр в жизни</button>
+  <a class="skip-link" href="#main">Перейти к содержанию</a>
+  <header class="site-header">
+    <div class="container site-header__inner">
+      <a class="brand-link" href="/" aria-label="Жанна Бородина — на главную">
+        <svg class="emblem" viewBox="10 16 60 55" fill="none" aria-hidden="true">
+          <g stroke-width="1.6">
+            <circle cx="34" cy="40" r="20" opacity="0.7" />
+            <circle cx="52" cy="44" r="14" opacity="0.7" />
+            <circle cx="43" cy="58" r="9" opacity="0.5" />
+          </g>
+        </svg>
+        <b>Жанна Бородина</b>
+        <span>Деньги и опора</span>
+      </a>
+      <nav class="nav" aria-label="Навигация"><a href="/#capitals">9 капиталов</a></nav>
     </div>
-    <div class="names">
-      <div class="field">
-        <label>Ваше имя</label>
-        <input type="text" id="nameMine" placeholder="Например, Жанна">
+  </header>
+
+  <main id="main">
+
+    <section class="tool" aria-labelledby="tool-title">
+      <div class="container tool-narrow">
+        <div class="page-head">
+          <div>
+            <p class="kicker">9 капиталов · практический инструмент</p>
+            <h1 id="tool-title">Калькулятор вклада в партнёрство</h1>
+            <p class="lede">Не только деньги. Оцените честно, кто что реально приносит в общее дело — с бизнес-партнёром, супругом(ой) в бизнесе или партнёром в жизни.</p>
+          </div>
+          <svg class="emblem" viewBox="10 16 60 55" fill="none" aria-hidden="true">
+            <g stroke-width="1.6">
+              <circle cx="34" cy="40" r="20" opacity="0.7" />
+              <circle cx="52" cy="44" r="14" opacity="0.7" />
+              <circle cx="43" cy="58" r="9" opacity="0.5" />
+            </g>
+          </svg>
+        </div>
+
+        <div class="tool-card">
+          <h3>С кем вы оцениваете партнёрство?</h3>
+          <div class="type-row" id="typeRow">
+            <button class="type-btn active" data-type="Бизнес-партнёр">Бизнес-партнёр</button>
+            <button class="type-btn" data-type="Супруг(а) в бизнесе">Супруг(а) в бизнесе</button>
+            <button class="type-btn" data-type="Партнёр в жизни">Партнёр в жизни</button>
+          </div>
+          <div class="names">
+            <div class="field">
+              <label>Ваше имя</label>
+              <input type="text" id="nameMine" placeholder="Например, Жанна">
+            </div>
+            <div class="field">
+              <label id="partnerLabel">Имя партнёра</label>
+              <input type="text" id="namePartner" placeholder="Например, Алексей">
+            </div>
+          </div>
+          <div class="progress-wrap">
+            <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+            <div class="progress-label" id="progressLabel">Оценено 0 из 9</div>
+          </div>
+        </div>
+
+        <div id="capitalsHost" class="tool-card"></div>
       </div>
-      <div class="field">
-        <label id="partnerLabel">Имя партнёра</label>
-        <input type="text" id="namePartner" placeholder="Например, Алексей">
+    </section>
+
+    <section class="tool on-plum">
+      <div class="container tool-narrow">
+        <p class="kicker">Результат</p>
+        <h2>Где вы сходитесь, а где — нет</h2>
+        <p class="lede" id="resultsSub">Общее распределение вклада и капиталы с самым большим расхождением в оценках — с них стоит начать разговор.</p>
+
+        <div class="split-labels">
+          <span class="m" id="splitMineLabel">Вы — 50%</span>
+          <span class="p" id="splitPartnerLabel">Партнёр — 50%</span>
+        </div>
+        <div class="split-row">
+          <div class="split-bar">
+            <div class="split-mine" id="splitMine" style="width:50%;"></div>
+            <div class="split-partner" id="splitPartner" style="width:50%;"></div>
+          </div>
+        </div>
+
+        <div class="legend">
+          <span><i class="dot dot--mine"></i>Вы</span>
+          <span><i class="dot dot--partner"></i>Партнёр</span>
+        </div>
+        <div class="radar-wrap">
+          <svg id="radar" width="480" height="480" viewBox="0 0 480 480"></svg>
+        </div>
+
+        <div class="gaps">
+          <h3>Где расхождение в оценках самое большое</h3>
+          <div id="gapsHost"></div>
+        </div>
       </div>
-    </div>
-    <div class="progress-wrap">
-      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
-      <div class="progress-label" id="progressLabel">Оценено 0 из 9</div>
-    </div>
-  </div>
+    </section>
 
-  <div id="capitalsHost"></div>
-
-  <div class="results">
-    <h2>Результат</h2>
-    <p class="sub" id="resultsSub">Общее распределение вклада и капиталы с самым большим расхождением в оценках — с них стоит начать разговор.</p>
-
-    <div class="split-labels">
-      <span class="m" id="splitMineLabel">Вы — 50%</span>
-      <span class="p" id="splitPartnerLabel">Партнёр — 50%</span>
-    </div>
-    <div class="split-row">
-      <div class="split-bar">
-        <div class="split-mine" id="splitMine" style="width:50%;"></div>
-        <div class="split-partner" id="splitPartner" style="width:50%;"></div>
+    <section class="tool">
+      <div class="container tool-narrow">
+        <p class="kicker">Следующий шаг</p>
+        <h2 id="ctaHeadline">Хотите обсудить результат вместе с партнёром?</h2>
+        <p class="lede" id="ctaSub">Оставьте контакт — вышлю разбор и приглашение на консультацию, где разберём именно ваши капиталы с наибольшим расхождением.</p>
+        <div class="cta-row">
+          <input type="text" id="ctaName" placeholder="Как к вам обращаться">
+          <input type="text" id="ctaContact" placeholder="Email или Telegram">
+          <button class="btn btn--primary" id="ctaBtn">Получить разбор</button>
+        </div>
+        <a class="back-link" href="/" style="margin-top:24px;">← На главную</a>
+        <p class="muted" style="font-size:12px;margin-top:18px;">Методика «Капитал твоей жизни». Оценки не сохраняются на сервере — считаются прямо в браузере.</p>
       </div>
-    </div>
+    </section>
 
-    <div class="legend">
-      <span><i class="dot" style="background:#5DCAA5;"></i>Вы</span>
-      <span><i class="dot" style="background:#F0997B;"></i>Партнёр</span>
-    </div>
-    <div class="radar-wrap">
-      <svg id="radar" width="480" height="480" viewBox="0 0 480 480"></svg>
-    </div>
+  </main>
 
-    <div class="gaps">
-      <h3>Где расхождение в оценках самое большое</h3>
-      <div id="gapsHost"></div>
+  <footer class="site-footer">
+    <div class="container site-footer__inner">
+      <div><strong>Жанна Бородина</strong> — финансовый советник</div>
+      <nav class="site-footer__docs" aria-label="Документы">
+        <a href="/privacy.html">Политика обработки персональных данных</a>
+        <a href="/consent-pdn.html">Согласие на обработку ПДн</a>
+        <a href="/consent-ads.html">Согласие на получение рекламы</a>
+        <a href="/offer.html">Публичная оферта</a>
+      </nav>
+      <p class="site-footer__req">
+        ИП Бородина Жанна Валентиновна · ИНН 344306618596 · ОГРНИП 325344300005629<br />
+        © 2026 Жанна Бородина
+      </p>
     </div>
-  </div>
-
-  <div class="cta">
-    <h2 id="ctaHeadline">Хотите обсудить результат вместе с партнёром?</h2>
-    <p id="ctaSub">Оставьте контакт — вышлю разбор и приглашение на консультацию, где разберём именно ваши капиталы с наибольшим расхождением.</p>
-    <div class="cta-row">
-      <input type="text" id="ctaName" placeholder="Как к вам обращаться">
-      <input type="text" id="ctaContact" placeholder="Email или Telegram">
-      <button class="cta-btn" id="ctaBtn">Получить разбор</button>
-    </div>
-  </div>
-
-  <p class="footnote">Методика «Капитал твоей жизни». Оценки не сохраняются на сервере — считаются прямо в браузере.</p>
-</div>
+  </footer>
 
 <script>
-const TYPES = ["Бизнес-партнёр","Супруг(а) в бизнесе","Партнёр в жизни"];
-
 const CAPITALS = [
   {id:1,name:"Материальный",
    desc:{"Бизнес-партнёр":"Кто вносит деньги, оборудование, активы в компанию — и в какой доле это отражено в документах.",
@@ -267,6 +313,12 @@ const CTA_TEXT = {
     p:"Оставьте контакт — вышлю разбор и приглашение на консультацию, где разберём именно ваши капиталы с наибольшим расхождением."}
 };
 
+const LABEL_LINES = {
+  1:["Материальный"], 2:["Физиологи-","ческий"], 3:["Социальный"],
+  4:["Администра-","тивный"], 5:["Политический"], 6:["Культурный"],
+  7:["Символи-","ческий"], 8:["Профессио-","нальный"], 9:["Временной"]
+};
+
 const state = { type:"Бизнес-партнёр", mine:{}, partner:{}, touched:{} };
 CAPITALS.forEach(c=>{ state.mine[c.id]=5; state.partner[c.id]=5; state.touched[c.id]=false; });
 
@@ -279,11 +331,11 @@ CAPITALS.forEach(c=>{
     <p class="cap-desc" id="desc-${c.id}">${c.desc[state.type]}</p>
     <div class="slider-row">
       <div class="slider-top"><span class="who mine">Мой вклад</span><span class="val" id="mval-${c.id}">5</span></div>
-      <input type="range" min="0" max="10" step="1" value="5" class="mine-slider" style="color:var(--mine)" data-id="${c.id}" data-who="mine">
+      <input type="range" min="0" max="10" step="1" value="5" class="mine-slider" data-id="${c.id}" data-who="mine">
     </div>
     <div class="slider-row">
       <div class="slider-top"><span class="who partner">Вклад партнёра (как вижу я)</span><span class="val" id="pval-${c.id}">5</span></div>
-      <input type="range" min="0" max="10" step="1" value="5" class="partner-slider" style="color:var(--partner)" data-id="${c.id}" data-who="partner">
+      <input type="range" min="0" max="10" step="1" value="5" class="partner-slider" data-id="${c.id}" data-who="partner">
     </div>
   `;
   host.appendChild(card);
@@ -301,9 +353,9 @@ document.querySelectorAll('input[type=range]').forEach(inp=>{
   });
 });
 
-document.querySelectorAll('.type-btn').forEach(btn=>{
+document.querySelectorAll('#typeRow .type-btn').forEach(btn=>{
   btn.addEventListener('click', ()=>{
-    document.querySelectorAll('.type-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('#typeRow .type-btn').forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');
     state.type = btn.dataset.type;
     applyType();
@@ -318,6 +370,44 @@ function applyType(){
   document.getElementById('ctaHeadline').textContent = CTA_TEXT[state.type].h;
   document.getElementById('ctaSub').textContent = CTA_TEXT[state.type].p;
   render();
+}
+
+function renderRadar(){
+  const svg = document.getElementById('radar');
+  const cx=240, cy=240, maxR=140;
+  const n = CAPITALS.length;
+  const angle = i => (Math.PI*2*i/n) - Math.PI/2;
+  const pt = (i,val) => {
+    const r = (val/10)*maxR;
+    const a = angle(i);
+    return [cx + r*Math.cos(a), cy + r*Math.sin(a)];
+  };
+  let svgContent = '';
+  [0.25,0.5,0.75,1].forEach(f=>{
+    let ring = CAPITALS.map((c,i)=>pt(i,10*f).join(',')).join(' ');
+    svgContent += `<polygon points="${ring}" fill="none" stroke="var(--plum-line)" stroke-opacity=".45" stroke-width="1"/>`;
+  });
+  CAPITALS.forEach((c,i)=>{
+    const [x,y] = pt(i,10);
+    svgContent += `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="var(--plum-line)" stroke-opacity=".45" stroke-width="1"/>`;
+    const a = angle(i);
+    const cosA = Math.cos(a);
+    const anchor = cosA > 0.2 ? 'start' : (cosA < -0.2 ? 'end' : 'middle');
+    const lx = cx + (maxR+22)*cosA;
+    const ly = cy + (maxR+22)*Math.sin(a);
+    const lines = LABEL_LINES[c.id];
+    if(lines.length===1){
+      svgContent += `<text x="${lx}" y="${ly}" font-size="11" font-weight="500" fill="var(--plum-ink)" fill-opacity=".8" text-anchor="${anchor}" dominant-baseline="middle" font-family="Inter,sans-serif">${lines[0]}</text>`;
+    } else {
+      const tspans = lines.map((line,idx)=>`<tspan x="${lx}" dy="${idx===0?-6:13}">${line}</tspan>`).join('');
+      svgContent += `<text x="${lx}" y="${ly}" font-size="11" font-weight="500" fill="var(--plum-ink)" fill-opacity=".8" text-anchor="${anchor}" dominant-baseline="middle" font-family="Inter,sans-serif">${tspans}</text>`;
+    }
+  });
+  const minePts = CAPITALS.map((c,i)=>pt(i,state.mine[c.id]).join(',')).join(' ');
+  const partnerPts = CAPITALS.map((c,i)=>pt(i,state.partner[c.id]).join(',')).join(' ');
+  svgContent += `<polygon points="${partnerPts}" fill="var(--plum-ink)" fill-opacity="0.2" stroke="var(--plum-ink)" stroke-width="2"/>`;
+  svgContent += `<polygon points="${minePts}" fill="var(--plum-gold)" fill-opacity="0.2" stroke="var(--plum-gold)" stroke-width="2"/>`;
+  svg.innerHTML = svgContent;
 }
 
 function render(){
@@ -339,7 +429,7 @@ function render(){
   document.getElementById('splitMineLabel').textContent = nameMine+' — '+pctMine+'%';
   document.getElementById('splitPartnerLabel').textContent = namePartner+' — '+pctPartner+'%';
 
-  drawRadar();
+  renderRadar();
 
   const gaps = CAPITALS.map(c=>({...c, diff: Math.abs(state.mine[c.id]-state.partner[c.id])}))
     .sort((a,b)=>b.diff-a.diff).slice(0,3).filter(g=>g.diff>0);
@@ -357,50 +447,6 @@ function render(){
       gh.appendChild(div);
     });
   }
-}
-
-const LABEL_LINES = {
-  1:["Материальный"], 2:["Физиологи-","ческий"], 3:["Социальный"],
-  4:["Администра-","тивный"], 5:["Политический"], 6:["Культурный"],
-  7:["Символи-","ческий"], 8:["Профессио-","нальный"], 9:["Временной"]
-};
-
-function drawRadar(){
-  const svg = document.getElementById('radar');
-  const cx=240, cy=240, maxR=140;
-  const n = CAPITALS.length;
-  const angle = i => (Math.PI*2*i/n) - Math.PI/2;
-  const pt = (i,val) => {
-    const r = (val/10)*maxR;
-    const a = angle(i);
-    return [cx + r*Math.cos(a), cy + r*Math.sin(a)];
-  };
-  let svgContent = '';
-  [0.25,0.5,0.75,1].forEach(f=>{
-    let ring = CAPITALS.map((c,i)=>pt(i,10*f).join(',')).join(' ');
-    svgContent += `<polygon points="${ring}" fill="none" stroke="#E7E0D4" stroke-width="1"/>`;
-  });
-  CAPITALS.forEach((c,i)=>{
-    const [x,y] = pt(i,10);
-    svgContent += `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="#E7E0D4" stroke-width="1"/>`;
-    const a = angle(i);
-    const cosA = Math.cos(a);
-    const anchor = cosA > 0.2 ? 'start' : (cosA < -0.2 ? 'end' : 'middle');
-    const lx = cx + (maxR+22)*cosA;
-    const ly = cy + (maxR+22)*Math.sin(a);
-    const lines = LABEL_LINES[c.id];
-    if(lines.length===1){
-      svgContent += `<text x="${lx}" y="${ly}" font-size="11" font-weight="500" fill="#E6E2D6" text-anchor="${anchor}" dominant-baseline="middle" font-family="Inter,sans-serif">${lines[0]}</text>`;
-    } else {
-      const tspans = lines.map((line,idx)=>`<tspan x="${lx}" dy="${idx===0?-6:13}">${line}</tspan>`).join('');
-      svgContent += `<text x="${lx}" y="${ly}" font-size="11" font-weight="500" fill="#E6E2D6" text-anchor="${anchor}" dominant-baseline="middle" font-family="Inter,sans-serif">${tspans}</text>`;
-    }
-  });
-  const minePts = CAPITALS.map((c,i)=>pt(i,state.mine[c.id]).join(',')).join(' ');
-  const partnerPts = CAPITALS.map((c,i)=>pt(i,state.partner[c.id]).join(',')).join(' ');
-  svgContent += `<polygon points="${partnerPts}" fill="#BA7517" fill-opacity="0.18" stroke="#BA7517" stroke-width="2"/>`;
-  svgContent += `<polygon points="${minePts}" fill="#0F6E56" fill-opacity="0.18" stroke="#0F6E56" stroke-width="2"/>`;
-  svg.innerHTML = svgContent;
 }
 
 document.getElementById('nameMine').addEventListener('input', render);
