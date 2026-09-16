@@ -200,8 +200,16 @@
       <div class="container tool-narrow">
         <p class="kicker">Следующий шаг</p>
         <h2 id="ctaHeadline">Хотите обсудить результат вместе с партнёром?</h2>
-        <p class="lede" id="ctaSub">Напишите — разберём именно ваши капиталы с наибольшим расхождением.</p>
-        <a class="btn btn--primary" href="https://t.me/Zhanna_World" target="_blank" rel="noopener" style="margin-top:6px;">Пишите: @Zhanna_World</a>
+        <p class="lede" id="ctaSub">Отправьте результат себе картинкой или напишите — разберём ваши капиталы с наибольшим расхождением.</p>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;">
+          <button class="btn btn--ghost" id="selfEmailToggleBtn">Отправить себе</button>
+          <button class="btn btn--primary" id="wantAnalysisBtn">Хочу разбор</button>
+        </div>
+        <div id="selfEmailBox" hidden style="margin-top:14px;gap:10px;flex-wrap:wrap;">
+          <input type="email" id="selfEmail" placeholder="Ваш email" style="flex:1;min-width:200px;border:1px solid var(--line);border-radius:8px;padding:10px 12px;font:inherit;font-size:15px;color:var(--ink);background:var(--bg);">
+          <button class="btn btn--primary" id="selfEmailSendBtn">Отправить</button>
+        </div>
+        <p id="ctaStatus" style="font-size:13px;margin:10px 0 0;color:var(--muted);"></p>
         <a class="back-link" href="/" style="margin-top:24px;">← На главную</a>
         <p class="muted" style="font-size:12px;margin-top:18px;">Методика «Капитал твоей жизни». Оценки не сохраняются на сервере — считаются прямо в браузере.</p>
       </div>
@@ -299,11 +307,11 @@ const RESULTS_SUB = {
 };
 const CTA_TEXT = {
   "Бизнес-партнёр":{h:"Хотите обсудить результат вместе с партнёром по бизнесу?",
-    p:"Напишите — разберём именно ваши капиталы с наибольшим расхождением."},
+    p:"Отправьте результат себе картинкой или напишите — разберём именно ваши капиталы с наибольшим расхождением."},
   "Супруг(а) в бизнесе":{h:"Хотите обсудить результат вместе — и как партнёры, и как супруги?",
-    p:"Напишите — разберём капиталы с наибольшим расхождением и в бизнесе, и в семье."},
+    p:"Отправьте результат себе картинкой или напишите — разберём капиталы с наибольшим расхождением и в бизнесе, и в семье."},
   "Партнёр в жизни":{h:"Хотите обсудить результат вместе с партнёром?",
-    p:"Напишите — разберём именно ваши капиталы с наибольшим расхождением."}
+    p:"Отправьте результат себе картинкой или напишите — разберём именно ваши капиталы с наибольшим расхождением."}
 };
 
 const LABEL_LINES = {
@@ -444,6 +452,50 @@ function render(){
 
 document.getElementById('nameMine').addEventListener('input', render);
 document.getElementById('namePartner').addEventListener('input', render);
+
+const LEAD_API_BASE = 'https://REPLACE-WITH-API-URL'; // TODO: адрес сервиса api на Railway
+
+function currentCapitalsPayload(){
+  return {
+    partnerType: state.type,
+    nameMine: document.getElementById('nameMine').value.trim() || 'Вы',
+    namePartner: document.getElementById('namePartner').value.trim() || 'Партнёр',
+    mine: state.mine,
+    partner: state.partner
+  };
+}
+
+document.getElementById('selfEmailToggleBtn').addEventListener('click', ()=>{
+  const box = document.getElementById('selfEmailBox');
+  const show = box.hidden;
+  box.hidden = !show;
+  box.style.display = show ? 'flex' : 'none';
+});
+
+document.getElementById('selfEmailSendBtn').addEventListener('click', async ()=>{
+  const email = document.getElementById('selfEmail').value.trim();
+  const statusEl = document.getElementById('ctaStatus');
+  if(!email){ statusEl.textContent = 'Введите email.'; return; }
+  statusEl.textContent = 'Отправляем…';
+  try{
+    const res = await fetch(LEAD_API_BASE + '/api/kalkulyator-result-email', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ email, ...currentCapitalsPayload() })
+    });
+    const data = await res.json();
+    statusEl.textContent = data.ok ? 'Отправлено — проверьте почту.' : 'Не получилось отправить, попробуйте позже.';
+  }catch(e){
+    statusEl.textContent = 'Не получилось отправить, попробуйте позже.';
+  }
+});
+
+document.getElementById('wantAnalysisBtn').addEventListener('click', ()=>{
+  fetch(LEAD_API_BASE + '/api/kalkulyator-lead', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify(currentCapitalsPayload())
+  }).catch(()=>{});
+  window.open('https://t.me/Zhanna_World', '_blank', 'noopener');
+});
 
 render();
 </script>
