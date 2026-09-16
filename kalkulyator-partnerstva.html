@@ -95,9 +95,6 @@
     .gap-item .g-diff { font-size: 12px; color: color-mix(in srgb, var(--plum-ink) 70%, transparent); margin-bottom: 6px; }
     .gap-item .g-text { font-size: 13px; color: var(--plum-ink); line-height: 1.55; }
 
-    .cta-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 18px; }
-    .cta-row input { flex: 1; min-width: 180px; border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; font: inherit; font-size: 15px; background: var(--bg); color: var(--ink); }
-
     .back-link { display: inline-block; margin-top: 8px; color: var(--muted); font-size: 13.5px; }
     @media (max-width: 620px) { .names { grid-template-columns: 1fr; } .page-head .emblem { display: none; } }
   </style>
@@ -203,12 +200,8 @@
       <div class="container tool-narrow">
         <p class="kicker">Следующий шаг</p>
         <h2 id="ctaHeadline">Хотите обсудить результат вместе с партнёром?</h2>
-        <p class="lede" id="ctaSub">Оставьте контакт — вышлю разбор и приглашение на консультацию, где разберём именно ваши капиталы с наибольшим расхождением.</p>
-        <div class="cta-row">
-          <input type="text" id="ctaName" placeholder="Как к вам обращаться">
-          <input type="text" id="ctaContact" placeholder="Email или Telegram">
-          <button class="btn btn--primary" id="ctaBtn">Получить разбор</button>
-        </div>
+        <p class="lede" id="ctaSub">Напишите — разберём именно ваши капиталы с наибольшим расхождением.</p>
+        <a class="btn btn--primary" href="https://t.me/Zhanna_World" target="_blank" rel="noopener" style="margin-top:6px;">Пишите: @Zhanna_World</a>
         <a class="back-link" href="/" style="margin-top:24px;">← На главную</a>
         <p class="muted" style="font-size:12px;margin-top:18px;">Методика «Капитал твоей жизни». Оценки не сохраняются на сервере — считаются прямо в браузере.</p>
       </div>
@@ -306,11 +299,11 @@ const RESULTS_SUB = {
 };
 const CTA_TEXT = {
   "Бизнес-партнёр":{h:"Хотите обсудить результат вместе с партнёром по бизнесу?",
-    p:"Оставьте контакт — вышлю разбор и приглашение на консультацию, где разберём именно ваши капиталы с наибольшим расхождением."},
+    p:"Напишите — разберём именно ваши капиталы с наибольшим расхождением."},
   "Супруг(а) в бизнесе":{h:"Хотите обсудить результат вместе — и как партнёры, и как супруги?",
-    p:"Оставьте контакт — вышлю разбор и приглашение на консультацию, где разберём капиталы с наибольшим расхождением и в бизнесе, и в семье."},
+    p:"Напишите — разберём капиталы с наибольшим расхождением и в бизнесе, и в семье."},
   "Партнёр в жизни":{h:"Хотите обсудить результат вместе с партнёром?",
-    p:"Оставьте контакт — вышлю разбор и приглашение на консультацию, где разберём именно ваши капиталы с наибольшим расхождением."}
+    p:"Напишите — разберём именно ваши капиталы с наибольшим расхождением."}
 };
 
 const LABEL_LINES = {
@@ -451,28 +444,6 @@ function render(){
 
 document.getElementById('nameMine').addEventListener('input', render);
 document.getElementById('namePartner').addEventListener('input', render);
-
-document.getElementById('ctaBtn').addEventListener('click', ()=>{
-  const ctaName = document.getElementById('ctaName').value.trim();
-  const ctaContact = document.getElementById('ctaContact').value.trim();
-  const nameMine = document.getElementById('nameMine').value.trim() || 'Вы';
-  const namePartner = document.getElementById('namePartner').value.trim() || 'Партнёр';
-  let sumMine=0,sumPartner=0;
-  CAPITALS.forEach(c=>{ sumMine+=state.mine[c.id]; sumPartner+=state.partner[c.id]; });
-  const total = sumMine+sumPartner || 1;
-  const pctMine = Math.round(sumMine/total*100);
-  const pctPartner = 100-pctMine;
-  const gaps = CAPITALS.map(c=>({...c, diff: Math.abs(state.mine[c.id]-state.partner[c.id])}))
-    .sort((a,b)=>b.diff-a.diff).slice(0,3).filter(g=>g.diff>0)
-    .map(g=>`${g.id}. ${g.name} (разница ${g.diff})`).join('%0D%0A');
-  const subject = encodeURIComponent('Заявка на разбор — калькулятор вклада в партнёрство');
-  const body = 'Имя: '+encodeURIComponent(ctaName)+'%0D%0A'+
-    'Контакт: '+encodeURIComponent(ctaContact)+'%0D%0A'+
-    'Тип партнёрства: '+encodeURIComponent(state.type)+'%0D%0A'+
-    nameMine+': '+pctMine+'%25, '+namePartner+': '+pctPartner+'%25%0D%0A'+
-    'Топ расхождений:%0D%0A'+(gaps||'нет заметных расхождений');
-  window.location.href = 'mailto:zvborodina@gmail.com?subject='+subject+'&body='+body;
-});
 
 render();
 </script>
