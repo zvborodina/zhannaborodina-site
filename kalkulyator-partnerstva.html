@@ -482,7 +482,8 @@ document.getElementById('selfResultBtn').addEventListener('click', async ()=>{
 });
 
 document.getElementById('wantAnalysisBtn').addEventListener('click', ()=>{
-  window.open('https://t.me/Zhanna_World', '_blank', 'noopener');
+  const prefill = encodeURIComponent('Добрый день. Хочу разбор «9 капиталов».');
+  window.open('https://t.me/Zhanna_World?text=' + prefill, '_blank', 'noopener');
 });
 
 render();
