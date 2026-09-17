@@ -466,7 +466,7 @@ document.getElementById('selfResultBtn').addEventListener('click', async ()=>{
   statusEl.textContent = 'Готовим…';
   // Открываем вкладку сразу, синхронно с кликом — иначе Safari блокирует
   // window.open после await как всплывающее окно без разрешения.
-  const win = window.open('', '_blank', 'noopener');
+  const win = window.open('', '_blank');
   try{
     const res = await fetch(LEAD_API_BASE + '/api/kalkulyator-self-token', {
       method:'POST', headers:{'Content-Type':'application/json'},
@@ -475,7 +475,8 @@ document.getElementById('selfResultBtn').addEventListener('click', async ()=>{
     const data = await res.json();
     if(data.ok && data.token){
       statusEl.textContent = '';
-      if(win){ win.location.href = 'https://t.me/calculator9capitals_bot?start=r_'+data.token; }
+      const dest = 'https://t.me/calculator9capitals_bot?start=r_'+data.token;
+      if(win){ win.location.href = dest; } else { window.location.href = dest; }
     } else {
       statusEl.textContent = 'Не получилось, попробуйте позже.';
       if(win){ win.close(); }
