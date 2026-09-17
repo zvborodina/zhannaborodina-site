@@ -203,7 +203,7 @@
         <p class="lede" id="ctaSub">Отправьте результат себе картинкой или напишите — разберём ваши капиталы с наибольшим расхождением.</p>
         <div style="display:flex;gap:12px;flex-wrap:wrap;">
           <button class="btn btn--ghost" id="selfResultBtn">Отправить себе</button>
-          <button class="btn btn--primary" id="wantAnalysisBtn">Хочу разбор</button>
+          <a class="btn btn--primary" id="wantAnalysisBtn" href="https://t.me/Zhanna_World?text=%D0%94%D0%BE%D0%B1%D1%80%D1%8B%D0%B9%20%D0%B4%D0%B5%D0%BD%D1%8C.%20%D0%A5%D0%BE%D1%87%D1%83%20%D1%80%D0%B0%D0%B7%D0%B1%D0%BE%D1%80%20%C2%AB9%20%D0%BA%D0%B0%D0%BF%D0%B8%D1%82%D0%B0%D0%BB%D0%BE%D0%B2%C2%BB." target="_blank" rel="noopener">Хочу разбор</a>
         </div>
         <p id="ctaStatus" style="font-size:13px;margin:10px 0 0;color:var(--muted);"></p>
         <a class="back-link" href="/" style="margin-top:24px;">← На главную</a>
@@ -486,10 +486,6 @@ document.getElementById('selfResultBtn').addEventListener('click', async ()=>{
   }
 });
 
-document.getElementById('wantAnalysisBtn').addEventListener('click', ()=>{
-  const prefill = encodeURIComponent('Добрый день. Хочу разбор «9 капиталов».');
-  window.open('https://t.me/Zhanna_World?text=' + prefill, '_blank', 'noopener');
-});
 
 render();
 </script>
