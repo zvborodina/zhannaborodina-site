@@ -482,10 +482,6 @@ document.getElementById('selfResultBtn').addEventListener('click', async ()=>{
 });
 
 document.getElementById('wantAnalysisBtn').addEventListener('click', ()=>{
-  fetch(LEAD_API_BASE + '/api/kalkulyator-lead', {
-    method:'POST', headers:{'Content-Type':'application/json'},
-    body: JSON.stringify(currentCapitalsPayload())
-  }).catch(()=>{});
   window.open('https://t.me/Zhanna_World', '_blank', 'noopener');
 });
 
