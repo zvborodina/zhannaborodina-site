@@ -464,6 +464,9 @@ function currentCapitalsPayload(){
 document.getElementById('selfResultBtn').addEventListener('click', async ()=>{
   const statusEl = document.getElementById('ctaStatus');
   statusEl.textContent = 'Готовим…';
+  // Открываем вкладку сразу, синхронно с кликом — иначе Safari блокирует
+  // window.open после await как всплывающее окно без разрешения.
+  const win = window.open('', '_blank', 'noopener');
   try{
     const res = await fetch(LEAD_API_BASE + '/api/kalkulyator-self-token', {
       method:'POST', headers:{'Content-Type':'application/json'},
@@ -472,12 +475,14 @@ document.getElementById('selfResultBtn').addEventListener('click', async ()=>{
     const data = await res.json();
     if(data.ok && data.token){
       statusEl.textContent = '';
-      window.open('https://t.me/calculator9capitals_bot?start=r_'+data.token, '_blank', 'noopener');
+      if(win){ win.location.href = 'https://t.me/calculator9capitals_bot?start=r_'+data.token; }
     } else {
       statusEl.textContent = 'Не получилось, попробуйте позже.';
+      if(win){ win.close(); }
     }
   }catch(e){
     statusEl.textContent = 'Не получилось, попробуйте позже.';
+    if(win){ win.close(); }
   }
 });
 
