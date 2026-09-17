@@ -202,10 +202,9 @@
         <h2 id="ctaHeadline">Хотите обсудить результат вместе с партнёром?</h2>
         <p class="lede" id="ctaSub">Отправьте результат себе картинкой или напишите — разберём ваши капиталы с наибольшим расхождением.</p>
         <div style="display:flex;gap:12px;flex-wrap:wrap;">
-          <button class="btn btn--ghost" id="selfResultBtn">Отправить себе</button>
+          <a class="btn btn--ghost" id="selfResultBtn" href="https://t.me/calculator9capitals_bot" target="_blank" rel="noopener">Отправить себе</a>
           <a class="btn btn--primary" id="wantAnalysisBtn" href="https://t.me/Zhanna_World?text=%D0%94%D0%BE%D0%B1%D1%80%D1%8B%D0%B9%20%D0%B4%D0%B5%D0%BD%D1%8C.%20%D0%A5%D0%BE%D1%87%D1%83%20%D1%80%D0%B0%D0%B7%D0%B1%D0%BE%D1%80%20%C2%AB9%20%D0%BA%D0%B0%D0%BF%D0%B8%D1%82%D0%B0%D0%BB%D0%BE%D0%B2%C2%BB." target="_blank" rel="noopener">Хочу разбор</a>
         </div>
-        <p id="ctaStatus" style="font-size:13px;margin:10px 0 0;color:var(--muted);"></p>
         <a class="back-link" href="/" style="margin-top:24px;">← На главную</a>
         <p class="muted" style="font-size:12px;margin-top:18px;">Методика «Капитал твоей жизни». Оценки не сохраняются на сервере — считаются прямо в браузере.</p>
       </div>
@@ -444,6 +443,8 @@ function render(){
       gh.appendChild(div);
     });
   }
+
+  refreshSelfResultLink();
 }
 
 document.getElementById('nameMine').addEventListener('input', render);
@@ -461,31 +462,28 @@ function currentCapitalsPayload(){
   };
 }
 
-document.getElementById('selfResultBtn').addEventListener('click', async ()=>{
-  const statusEl = document.getElementById('ctaStatus');
-  statusEl.textContent = 'Готовим…';
-  // Открываем вкладку сразу, синхронно с кликом — иначе Safari блокирует
-  // window.open после await как всплывающее окно без разрешения.
-  const win = window.open('', '_blank');
-  try{
-    const res = await fetch(LEAD_API_BASE + '/api/kalkulyator-self-token', {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify(currentCapitalsPayload())
-    });
-    const data = await res.json();
-    if(data.ok && data.token){
-      statusEl.textContent = '';
-      const dest = 'https://t.me/calculator9capitals_bot?start=r_'+data.token;
-      if(win){ win.location.href = dest; } else { window.location.href = dest; }
-    } else {
-      statusEl.textContent = 'Не получилось, попробуйте позже.';
-      if(win){ win.close(); }
-    }
-  }catch(e){
-    statusEl.textContent = 'Не получилось, попробуйте позже.';
-    if(win){ win.close(); }
-  }
-});
+// «Отправить себе» — обычная ссылка (не window.open): некоторые
+// встроенные браузеры (например, внутри Telegram) не дают скриптом
+// перенаправить окно после сетевого запроса. Поэтому адрес с токеном
+// готовим заранее, пока человек ещё заполняет капиталы, и просто
+// держим его в href — клик становится обычным переходом по ссылке.
+let selfResultDebounce = null;
+function refreshSelfResultLink(){
+  clearTimeout(selfResultDebounce);
+  selfResultDebounce = setTimeout(async ()=>{
+    try{
+      const res = await fetch(LEAD_API_BASE + '/api/kalkulyator-self-token', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify(currentCapitalsPayload())
+      });
+      const data = await res.json();
+      if(data.ok && data.token){
+        document.getElementById('selfResultBtn').href =
+          'https://t.me/calculator9capitals_bot?start=r_'+data.token;
+      }
+    }catch(e){ /* ссылка останется прежней — не страшно, обновим позже */ }
+  }, 700);
+}
 
 
 render();
